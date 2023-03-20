@@ -21,5 +21,12 @@ data class Attribute(
         key: String?,
         default: String?,
         extra: String?
-    ) : this(field, TypeInferrer(listOf(IntegerTypeParser(), StringTypeParser())).inferType(type), isNullable.equals("YES", ignoreCase = true), key, default, extra)
+    ) : this(
+        field,
+        TypeInferrer(listOf(IntegerTypeParser(), StringTypeParser())).inferType(type),
+        isNullable.equals("YES", ignoreCase = true),
+        key,
+        default,
+        extra
+    )
 }

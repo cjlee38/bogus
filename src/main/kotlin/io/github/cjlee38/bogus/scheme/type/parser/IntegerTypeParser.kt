@@ -14,7 +14,7 @@ class IntegerTypeParser : AbstractTypeParser() {
             val max = (1L shl 16) - 1
             return IntegerType(false, min, max)
         } else if (name.equals("mediumint", ignoreCase = true)) {
-            return IntegerType(false, -1L shl 8, (1L shl 8) -1)
+            return IntegerType(false, -1L shl 8, (1L shl 8) - 1)
         } else {
             throw IllegalArgumentException("temp : $notation")
         }
