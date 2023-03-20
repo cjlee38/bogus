@@ -9,7 +9,7 @@ class SchemeAnalyzer(
     private val dataSource: DataSource,
     private val jdbcTemplate: JdbcTemplate
 ) {
-    fun analyze() {
+    fun analyze(): Schema {
         val tableNames = jdbcTemplate.query("show tables") { rs, rowNum ->
             rs.getString("Tables_in_dumgen") // todo : fix this
         }
