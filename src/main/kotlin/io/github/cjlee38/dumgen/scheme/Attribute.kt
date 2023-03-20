@@ -7,12 +7,12 @@ import io.github.cjlee38.dumgen.scheme.type.parser.StringTypeParser
 
 
 data class Attribute(
-    private val field: String,
-    private val type: DType,
-    private val isNullable: Boolean,
-    private val key: String?,
-    private val default: String?,
-    private val extra: String?
+    val field: String,
+    val type: DType,
+    val isNullable: Boolean,
+    val key: String?,
+    val default: String?,
+    val extra: String?
 ) {
     constructor(
         field: String,
