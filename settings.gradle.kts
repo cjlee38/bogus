@@ -1,1 +1,1 @@
-rootProject.name = "dumgen"
+rootProject.name = "bogus"

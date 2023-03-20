@@ -4,7 +4,7 @@ spring:
 #    username: sa
 #    password:
   datasource:
-    url: jdbc:mysql://localhost:63306/dumgen
+    url: jdbc:mysql://localhost:63306/bogus
     username: root
     password: root
   sql:

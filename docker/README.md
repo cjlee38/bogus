@@ -1,1 +1,1 @@
-docker-compose -p dumgen up -d
+docker-compose -p bogus up -d
