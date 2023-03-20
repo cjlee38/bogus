@@ -17,6 +17,6 @@ class TableGeneratorTest {
             Attribute("team_name", "varchar(255)", "NO", null, null, null)
         ))
         val result = tableGenerator.generate(relation, 100)
-        println("result = ${result.joinToString(separator = "\n")}")
+        println("result = ${result.tuples.joinToString(separator = "\n")}")
     }
 }
