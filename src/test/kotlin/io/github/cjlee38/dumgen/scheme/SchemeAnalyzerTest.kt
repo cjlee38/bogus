@@ -10,6 +10,7 @@ class SchemeAnalyzerTest(
 ) {
     @Test
     fun asd() {
-        schemeAnalyzer.analyze()
+        val schema = schemeAnalyzer.analyze()
+        println(schema)
     }
 }
