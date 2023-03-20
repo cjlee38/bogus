@@ -1,4 +1,5 @@
 package io.github.cjlee38.dumgen.scheme
 
-class Relation {
-}
+data class Relation(
+    private val attributes: List<Attribute>
+)
