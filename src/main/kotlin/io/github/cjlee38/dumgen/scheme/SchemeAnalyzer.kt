@@ -9,7 +9,7 @@ class SchemeAnalyzer(
 ) {
     fun analyze(): Schema {
         return requireTableNames()
-            .map { Relation(requireAttribute(it)) }
+            .map { Relation(it, requireAttribute(it)) }
             .let(::Schema)
     }
 
