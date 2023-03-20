@@ -1,4 +1,4 @@
-package io.github.cjlee38.dumgen
+package io.github.cjlee38.dumgen.support
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestConstructor
