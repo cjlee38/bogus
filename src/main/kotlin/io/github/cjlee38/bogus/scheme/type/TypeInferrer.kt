@@ -10,6 +10,6 @@ class TypeInferrer(
     fun inferType(notation: String): DType {
         return parsers.firstOrNull { it.parsable(notation) }
             ?.parse(notation)
-            ?: throw IllegalArgumentException("todo")
+            ?: throw IllegalArgumentException("infer type error : $notation")
     }
 }
