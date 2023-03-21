@@ -2,21 +2,34 @@ package io.github.cjlee38.bogus.scheme.type.parser
 
 import io.github.cjlee38.bogus.scheme.type.DType
 import io.github.cjlee38.bogus.scheme.type.IntegerType
+import java.util.Locale
 
 class IntegerTypeParser : AbstractTypeParser() {
-    override val knownTypes = listOf("bigint", "mediumint")
+    override val knownTypes = storageBytes.keys.toList()
 
     override fun parse(notation: String): DType {
-        val (name, zfill) = super.doSome(notation)
+        val (name, _, unsigned) = super.destruct(notation)
 
-        if (name.equals("bigint", ignoreCase = true)) {
-            val min = -1L shl 16
-            val max = (1L shl 16) - 1
-            return IntegerType(false, min, max)
-        } else if (name.equals("mediumint", ignoreCase = true)) {
-            return IntegerType(false, -1L shl 8, (1L shl 8) - 1)
-        } else {
-            throw IllegalArgumentException("temp : $notation")
-        }
+        val (min, max) = getMinMax(name)
+        return IntegerType(unsigned, min, max)
+    }
+
+    private fun getMinMax(name: String): Pair<Long, Long> {
+        val bytes = storageBytes[name.lowercase(Locale.getDefault())] ?: throw IllegalArgumentException("invalid integer type : $name")
+        val bits = bytes * byteBit
+        val min = -1L shl (bits - 1)
+        val max = (1L shl (bits - 1)) - 1
+        return min to max
+    }
+
+    companion object {
+        private const val byteBit = 8
+        private val storageBytes = mapOf(
+            "tinyint" to 1,
+            "smallint" to 2,
+            "mediumint" to 3,
+            "int" to 4,
+            "bigint" to 8
+        )
     }
 }
