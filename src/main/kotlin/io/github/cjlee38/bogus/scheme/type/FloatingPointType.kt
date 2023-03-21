@@ -1,0 +1,6 @@
+package io.github.cjlee38.bogus.scheme.type
+
+data class FloatingPointType(
+    val min: Double,
+    val max: Double
+) : DType
