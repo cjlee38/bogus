@@ -1,6 +1,7 @@
 package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.util.getLowerString
+import io.github.cjlee38.bogus.util.getNullableLowerString
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
@@ -36,9 +37,9 @@ class SchemeAnalyzer(
             val field = rs.getLowerString("Field")
             val type = rs.getLowerString("Type")
             val isNullable = rs.getLowerString("Null")
-            val key = rs.getLowerString("Key")
-            val default = rs.getLowerString("Default")
-            val extra = rs.getLowerString("Extra")
+            val key = rs.getNullableLowerString("Key")
+            val default = rs.getNullableLowerString("Default")
+            val extra = rs.getNullableLowerString("Extra")
 
             Attribute(field, type, isNullable, key, default, extra)
         }

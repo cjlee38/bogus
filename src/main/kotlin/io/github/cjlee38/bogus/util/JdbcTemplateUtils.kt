@@ -7,5 +7,6 @@ fun ResultSet.getLowerString(columnLabel: String): String {
 }
 
 fun ResultSet.getNullableLowerString(columnLabel: String): String? {
-    return getString(columnLabel)?.lowercase()
+    val value = getString(columnLabel)?.lowercase()
+    return if (value.isEffectiveNull()) null else value
 }
