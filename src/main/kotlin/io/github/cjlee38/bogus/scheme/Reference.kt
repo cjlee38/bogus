@@ -1,6 +1,8 @@
 package io.github.cjlee38.bogus.scheme
 
 data class Reference(
-    val from: Attribute,
-    val to: Attribute,
+    val relation: Relation,
+    val attribute: Attribute,
+    val referencedRelation: Relation,
+    val referencedAttribute: Attribute,
 )
