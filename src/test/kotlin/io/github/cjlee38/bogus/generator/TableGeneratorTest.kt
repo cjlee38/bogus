@@ -6,7 +6,7 @@ import io.github.cjlee38.bogus.scheme.Relation
 import org.junit.jupiter.api.Test
 
 class TableGeneratorTest {
-    private val tableGenerator = TableGenerator(StringTypeGenerator(), IntegerTypeGenerator())
+    private val tableGenerator = TableGenerator()
 
     @Test
     fun test() {

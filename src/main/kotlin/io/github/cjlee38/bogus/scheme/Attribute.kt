@@ -29,4 +29,11 @@ data class Attribute(
         default,
         extra
     )
+
+    fun generateRandom(): Any? {
+        if (isNullable) {
+            // todo
+        }
+        return type.generateRandom()
+    }
 }
