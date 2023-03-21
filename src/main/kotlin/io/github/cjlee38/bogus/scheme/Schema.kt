@@ -1,5 +1,7 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.generator.Table
+
 data class Schema(val relations: List<Relation>) {
     fun applyReferences(referenceInfos: List<ReferenceInfo>) {
         referenceInfos.forEach { ref ->
@@ -13,5 +15,9 @@ data class Schema(val relations: List<Relation>) {
             val referencedAttribute = referencedRelation.attributes.first { it.field == ref.referencedAttribute }
             attribute.reference = Reference(attribute, referencedAttribute)
         }
+    }
+
+    fun generate(): Map<Relation, Table> {
+        return relations.associateWith { it.generateRandom(5) }
     }
 }
