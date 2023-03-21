@@ -16,11 +16,16 @@ repositories {
     mavenCentral()
 }
 
+extra["kotlin-coroutines.version"] = "1.6.0"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    testImplementation("io.kotest:kotest-runner-junit5:5.4.2")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2")
 
     runtimeOnly("mysql:mysql-connector-java:8.0.30")
     runtimeOnly("com.h2database:h2")
