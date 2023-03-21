@@ -1,5 +1,6 @@
 package io.github.cjlee38.bogus
 
+import io.github.cjlee38.bogus.config.UserConfiguration
 import io.github.cjlee38.bogus.jdbc.QueryBuilder
 import io.github.cjlee38.bogus.scheme.SchemeAnalyzer
 import org.springframework.stereotype.Component
@@ -18,6 +19,7 @@ class Bogus(
     }
 
     private fun bootstrap() {
+        UserConfiguration
         // todo : read configuration file
     }
 }

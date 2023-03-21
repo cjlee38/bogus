@@ -5,14 +5,12 @@ import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import javax.sql.DataSource
 import mu.KotlinLogging
 
 @Component
 class SchemeAnalyzer(
     private val jdbcTemplate: JdbcTemplate,
     private val typeInferrer: TypeInferrer,
-    private val dataSource: DataSource,
     private val referenceAnalyzer: ReferenceAnalyzer,
 ) {
     private val logger = KotlinLogging.logger {}
@@ -47,15 +45,7 @@ class SchemeAnalyzer(
 
     private fun topologySort(relations: List<Relation>): List<Relation> {
         // initialize degree
-        val inDegreeByAttribute = relations
-            .flatMap { relation -> relation.attributes.map { it.reference } }
-            .filterNotNull()
-            .flatMap { listOf(it.attribute, it.referencedAttribute) }
-            .associateWith { 0 }
-            .toMutableMap()
-
-        val inDegreeByRelation = inDegreeByAttribute.keys
-            .map { it.relation }
+        val inDegreeByRelation = relations
             .distinct()
             .associateWith { 0 }
             .toMutableMap()
@@ -96,6 +86,7 @@ class SchemeAnalyzer(
     }
 
     private fun requireDatabase(): String {
+        val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
         val database = dataSource.connection.catalog
         logger.info { "detected database : $database" }
         return database
