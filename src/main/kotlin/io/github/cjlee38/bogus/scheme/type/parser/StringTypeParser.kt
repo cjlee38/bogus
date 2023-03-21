@@ -6,10 +6,8 @@ class StringTypeParser : AbstractTypeParser() {
     override val knownTypes: List<String> = listOf("varchar", "char")
 
     override fun parse(notation: String): StringType {
-        val (name, length) = doSome(notation)
-        if (name.equals("varchar", ignoreCase = true)) {
-            return StringType(isVariable = true, length.toInt())
-        }
-        throw IllegalArgumentException()
+        val (type, length) = destruct(notation)
+        val isVariable = type.equals("varchar", ignoreCase = true)
+        return StringType(isVariable, length.toInt())
     }
 }
