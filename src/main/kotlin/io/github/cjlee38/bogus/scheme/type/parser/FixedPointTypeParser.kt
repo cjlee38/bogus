@@ -2,7 +2,9 @@ package io.github.cjlee38.bogus.scheme.type.parser
 
 import io.github.cjlee38.bogus.scheme.type.DType
 import io.github.cjlee38.bogus.scheme.type.FixedPointType
+import org.springframework.stereotype.Component
 
+@Component
 class FixedPointTypeParser: AbstractTypeParser() {
     override val knownTypes = listOf("decimal")
 

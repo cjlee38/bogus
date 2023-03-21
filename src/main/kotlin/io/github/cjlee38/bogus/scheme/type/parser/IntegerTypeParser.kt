@@ -2,8 +2,10 @@ package io.github.cjlee38.bogus.scheme.type.parser
 
 import io.github.cjlee38.bogus.scheme.type.DType
 import io.github.cjlee38.bogus.scheme.type.IntegerType
+import org.springframework.stereotype.Component
 import java.util.Locale
 
+@Component
 class IntegerTypeParser : AbstractTypeParser() {
     override val knownTypes = storageBytes.keys.toList()
 
