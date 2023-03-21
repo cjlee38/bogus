@@ -7,7 +7,7 @@ class StringTypeParser : AbstractTypeParser() {
 
     override fun parse(notation: String): StringType {
         val (type, length) = destruct(notation)
-        val isVariable = type.equals("varchar", ignoreCase = true)
+        val isVariable = type == "varchar"
         return StringType(isVariable, length.toInt())
     }
 }

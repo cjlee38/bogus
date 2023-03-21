@@ -14,6 +14,9 @@ data class Attribute(
     val default: String?,
     val extra: String?
 ) {
+    var reference: Reference? = null
+        internal set
+
     constructor(
         field: String,
         type: String,
@@ -24,7 +27,7 @@ data class Attribute(
     ) : this(
         field,
         TypeInferrer(listOf(IntegerTypeParser(), StringTypeParser())).inferType(type),
-        isNullable.equals("YES", ignoreCase = true),
+        isNullable == "YES",
         key,
         default,
         extra

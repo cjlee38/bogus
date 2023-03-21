@@ -9,7 +9,7 @@ class FloatingPointTypeParser : AbstractTypeParser() {
     override fun parse(notation: String): DType {
         val (type, _, _) = super.destruct(notation)
         val (min, max) =
-            if (type.equals("float", ignoreCase = true)) Float.MIN_VALUE.toDouble() to Float.MAX_VALUE.toDouble()
+            if (type == "float") Float.MIN_VALUE.toDouble() to Float.MAX_VALUE.toDouble()
             else Double.MIN_VALUE to Double.MAX_VALUE
         return FloatingPointType(min, max)
     }
