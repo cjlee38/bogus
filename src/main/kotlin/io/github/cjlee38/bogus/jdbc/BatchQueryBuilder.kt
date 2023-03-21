@@ -2,7 +2,11 @@ package io.github.cjlee38.bogus.jdbc
 
 import io.github.cjlee38.bogus.generator.Table
 import io.github.cjlee38.bogus.scheme.Relation
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Component
 
+@Component
+@Primary
 class BatchQueryBuilder : QueryBuilder {
     override fun build(relation: Relation, table: Table) {
         val sb = StringBuilder("insert into ${relation.name} (${relation.fields.joinToString()}) values ")
