@@ -5,7 +5,6 @@ import io.github.cjlee38.bogus.persistence.Sequence
 import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.type.DType
 import io.github.cjlee38.bogus.util.mixIn
-//import io.github.cjlee38.bogus.util.mixIn
 import kotlin.random.Random
 
 
@@ -24,10 +23,6 @@ class Attribute(
         get() = key == "pri"
 
     fun generateColumn(count: Int): Column {
-//        val cached = Storage.find(relation, this)
-//        if (cached != null) {
-//            return cached
-//        }
         var generate = getSource()
         if (isNullable) generate = mixInNullable(generate)
 
@@ -45,7 +40,7 @@ class Attribute(
         val ref = reference
         if (ref != null) {
             val refColumn = Storage.find(ref.referencedRelation, ref.referencedAttribute)
-                ?: ref.referencedAttribute.generateColumn(5) // this is temporary
+                ?: throw IllegalArgumentException("unexpected exception : ${ref.referencedRelation} ${ref.referencedAttribute}")
             return { refColumn.values.random() }
         }
         if (isPrimary) {
@@ -57,5 +52,27 @@ class Attribute(
             }
         }
         return { type.generateRandom() }
+    }
+
+    override fun toString(): String {
+        return "Attribute(field='$field', type=$type)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Attribute
+
+        if (field != other.field) return false
+        if (relation != other.relation) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = field.hashCode()
+        result = 31 * result + relation.hashCode()
+        return result
     }
 }

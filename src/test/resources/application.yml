@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: types
+    active: complex
   #  datasource:
   #    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   #    username: sa
@@ -21,3 +21,18 @@ spring:
       on-profile: types
   datasource:
     url: jdbc:mysql://localhost:63306/types?createDatabaseIfNotExist=true
+  sql:
+    init:
+      platform: types
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: complex
+  datasource:
+    url: jdbc:mysql://localhost:63306/complex?createDatabaseIfNotExist=true
+  sql:
+    init:
+      platform: complex

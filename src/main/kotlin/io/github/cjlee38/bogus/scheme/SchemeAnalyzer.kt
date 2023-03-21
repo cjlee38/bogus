@@ -6,6 +6,7 @@ import io.github.cjlee38.bogus.util.getNullableLowerString
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
+import mu.KotlinLogging
 
 @Component
 class SchemeAnalyzer(
@@ -14,6 +15,8 @@ class SchemeAnalyzer(
     private val dataSource: DataSource,
     private val referenceAnalyzer: ReferenceAnalyzer,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun analyze(): Schema {
         val database = requireDatabase()
         val references = referenceAnalyzer.analyze(database)
@@ -24,7 +27,9 @@ class SchemeAnalyzer(
 
     private fun post(references: List<ReferenceInfo>, relations: List<Relation>): List<Relation> {
         applyReferences(references, relations)
-        return topologySort(relations)
+        val sorted = topologySort(relations)
+        logger.info { "after toplogical sort : $sorted" }
+        return sorted
     }
 
     private fun applyReferences(referenceInfos: List<ReferenceInfo>, relations: List<Relation>) {
@@ -55,17 +60,16 @@ class SchemeAnalyzer(
             .associateWith { 0 }
             .toMutableMap()
 
-        for (entry in inDegreeByAttribute) {
-            val attribute = entry.key
-            val ref = attribute.reference
-            if (ref != null) {
-                inDegreeByAttribute[ref.referencedAttribute] = inDegreeByAttribute[ref.referencedAttribute]!! + 1
-                inDegreeByRelation[ref.referencedRelation] = inDegreeByRelation[ref.referencedRelation]!! + 1
+        for (entry in inDegreeByRelation) {
+            val references: List<Reference> = entry.key.attributes.map { it.reference }.filterNotNull()
+            for (reference in references) {
+                inDegreeByRelation[reference.referencedRelation] = inDegreeByRelation[reference.referencedRelation]!! + 1
             }
         }
+
         // Q ready
-        val Q = ArrayDeque<Attribute>()
-        for (entry in inDegreeByAttribute) {
+        val Q = ArrayDeque<Relation>()
+        for (entry in inDegreeByRelation) {
             if (entry.value == 0) {
                 Q.addLast(entry.key)
             }
@@ -74,35 +78,35 @@ class SchemeAnalyzer(
         val sorted = mutableListOf<Relation>()
         while (Q.size != 0) {
             val current = Q.removeFirst()
-            // attribute
-            val ref = current.reference
-            if (ref != null) {
-                val refAttribute = ref.referencedAttribute
-                inDegreeByAttribute[refAttribute] = inDegreeByAttribute[refAttribute]!! - 1
-                if (inDegreeByAttribute[refAttribute] == 0) {
-                    Q.addLast(refAttribute)
-                }
+            sorted.add(current)
 
+            val refs = current.attributes.map { it.reference }.filterNotNull()
+            for (ref in refs) {
                 val refRelation = ref.referencedRelation
                 inDegreeByRelation[refRelation] = inDegreeByRelation[refRelation]!! - 1
             }
-            // relation
-
-            if (inDegreeByRelation[current.relation] == 0) {
-                sorted.add(current.relation)
+            for (ref in refs) {
+                val refRelation = ref.referencedRelation
+                if (inDegreeByRelation[refRelation] == 0) {
+                    Q.add(refRelation)
+                }
             }
         }
         return sorted.reversed()
     }
 
     private fun requireDatabase(): String {
-        return dataSource.connection.catalog
+        val database = dataSource.connection.catalog
+        logger.info { "detected database : $database" }
+        return database
     }
 
     private fun requireTableNames(): List<String> {
-        return jdbcTemplate.query("show tables") { rs, _ ->
+        val tableNames = jdbcTemplate.query("show tables") { rs, _ ->
             rs.getString(1)
         }
+        logger.info { "detected tables : $tableNames" }
+        return tableNames
     }
 
     private fun requireAttribute(it: String?): List<Attribute> {

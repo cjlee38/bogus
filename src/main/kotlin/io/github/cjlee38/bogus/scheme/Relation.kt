@@ -2,7 +2,7 @@ package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.generator.Table
 
-data class Relation(
+class Relation(
     val name: String,
     val attributes: List<Attribute>
 ) {
@@ -19,5 +19,24 @@ data class Relation(
             rowCount = count,
             columns = attributes.map { attribute -> attribute.generateColumn(count) }
         )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Relation
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+    override fun toString(): String {
+        return "Relation(name='$name')"
     }
 }
