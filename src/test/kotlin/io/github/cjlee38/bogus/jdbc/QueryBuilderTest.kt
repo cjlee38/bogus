@@ -18,6 +18,6 @@ class QueryBuilderTest {
             )
         )
         val table = Table(listOf(Tuple(1, "hello"), Tuple(2, "world")))
-        eachInserter.build(relation, table)
+        eachInserter.build(table)
     }
 }

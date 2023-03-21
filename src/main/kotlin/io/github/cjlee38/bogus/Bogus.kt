@@ -1,8 +1,6 @@
 package io.github.cjlee38.bogus
 
-import io.github.cjlee38.bogus.generator.Table
 import io.github.cjlee38.bogus.jdbc.QueryBuilder
-import io.github.cjlee38.bogus.scheme.Relation
 import io.github.cjlee38.bogus.scheme.SchemeAnalyzer
 import org.springframework.stereotype.Component
 
@@ -15,10 +13,8 @@ class Bogus(
     fun run() {
         bootstrap()
         val schema = schemeAnalyzer.analyze()
-        val associateWith = schema.generate()
-        val map = associateWith.map {
-            queryBuilder.build(it.key, it.value)
-        }
+        val data = schema.generate()
+        data.forEach { queryBuilder.build(it) }
     }
 
     private fun bootstrap() {

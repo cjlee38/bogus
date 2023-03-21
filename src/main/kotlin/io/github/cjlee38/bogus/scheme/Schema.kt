@@ -17,7 +17,7 @@ data class Schema(val relations: List<Relation>) {
         }
     }
 
-    fun generate(): Map<Relation, Table> {
-        return relations.associateWith { it.generateRandom(5) }
+    fun generate(): List<Table> {
+        return relations.map { it.generateTable(5) }
     }
 }

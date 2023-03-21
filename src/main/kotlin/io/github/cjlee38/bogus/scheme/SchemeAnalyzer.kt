@@ -1,5 +1,6 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
 import org.springframework.jdbc.core.JdbcTemplate
@@ -9,6 +10,7 @@ import javax.sql.DataSource
 @Component
 class SchemeAnalyzer(
     private val jdbcTemplate: JdbcTemplate,
+    private val typeInferrer: TypeInferrer,
     private val dataSource: DataSource,
     private val referenceAnalyzer: ReferenceAnalyzer,
 ) {
