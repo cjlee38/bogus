@@ -5,11 +5,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class EachQueryBuilder : QueryBuilder {
-    override fun build(table: Table) {
-        val sql = "insert into ${table.relation.name} (${table.relation.fields.joinToString()}) values (%s)"
-        for (tuple in table.tuples) {
-            val sql2 = sql.format(tuple.values.joinToString())
-            println("sql2 = ${sql2}")
-        }
+    override fun build(table: Table): List<String> {
+        val sql = "insert into ${table.relation.name} (${table.relation.fields.joinToString()}) values (%s);"
+        return table.tuples.map { sql.format(it.values.joinToString()) }
     }
 }

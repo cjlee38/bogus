@@ -17,10 +17,45 @@ class SchemeAnalyzer(
 
     fun analyze(): Schema {
         val database = requireDatabase()
-        val references = referenceAnalyzer.analyze(database)
         val relations = requireTableNames()
             .map { Relation(it, requireAttribute(it)) }
+        val references = referenceAnalyzer.analyze(database)
         return Schema(post(references, relations))
+    }
+
+    private fun requireDatabase(): String {
+        val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
+        val database = dataSource.connection.catalog
+        logger.info { "detected database : $database" }
+        return database
+    }
+
+    private fun requireTableNames(): List<String> {
+        val tableNames = jdbcTemplate.query("show tables") { rs, _ ->
+            rs.getString(1)
+        }
+        logger.info { "detected tables : $tableNames" }
+        return tableNames
+    }
+
+    private fun requireAttribute(it: String?): List<Attribute> {
+        return jdbcTemplate.query("describe $it") { rs, _ ->
+            val field = rs.getLowerString("Field")
+            val type = rs.getLowerString("Type")
+            val isNullable = rs.getLowerString("Null")
+            val key = rs.getNullableLowerString("Key")
+            val default = rs.getNullableLowerString("Default")
+            val extra = rs.getNullableLowerString("Extra")
+
+            Attribute(
+                field = field,
+                type = typeInferrer.inferType(type),
+                isNullable = isNullable == "yes",
+                key = key,
+                default = default,
+                extra = extra
+            )
+        }
     }
 
     private fun post(references: List<ReferenceInfo>, relations: List<Relation>): List<Relation> {
@@ -83,40 +118,5 @@ class SchemeAnalyzer(
             }
         }
         return sorted.reversed()
-    }
-
-    private fun requireDatabase(): String {
-        val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
-        val database = dataSource.connection.catalog
-        logger.info { "detected database : $database" }
-        return database
-    }
-
-    private fun requireTableNames(): List<String> {
-        val tableNames = jdbcTemplate.query("show tables") { rs, _ ->
-            rs.getString(1)
-        }
-        logger.info { "detected tables : $tableNames" }
-        return tableNames
-    }
-
-    private fun requireAttribute(it: String?): List<Attribute> {
-        return jdbcTemplate.query("describe $it") { rs, _ ->
-            val field = rs.getLowerString("Field")
-            val type = rs.getLowerString("Type")
-            val isNullable = rs.getLowerString("Null")
-            val key = rs.getNullableLowerString("Key")
-            val default = rs.getNullableLowerString("Default")
-            val extra = rs.getNullableLowerString("Extra")
-
-            Attribute(
-                field = field,
-                type = typeInferrer.inferType(type),
-                isNullable = isNullable == "yes",
-                key = key,
-                default = default,
-                extra = extra
-            )
-        }
     }
 }

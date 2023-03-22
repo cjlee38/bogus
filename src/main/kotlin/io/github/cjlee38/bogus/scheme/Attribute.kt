@@ -1,8 +1,10 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.generator.Column
 import io.github.cjlee38.bogus.persistence.Sequence
 import io.github.cjlee38.bogus.persistence.Storage
+import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DType
 import io.github.cjlee38.bogus.util.mixIn
 import kotlin.random.Random
@@ -22,13 +24,29 @@ class Attribute(
     val isPrimary: Boolean
         get() = key == "pri"
 
-    fun generateColumn(count: Int): Column {
-        var generate = getSource()
+    fun generateColumn(config: RelationConfig): Column {
+        var generate = getSource(config)
         if (isNullable) generate = mixInNullable(generate)
+        generate = mixInRange(generate, config)
 
-        val column = Column(this, (0 until count).map { generate() })
-        Storage.save(this, column)
+        val column = Column(this, generate() as List<Any?>)
+        Storage.save(column)
         return column
+    }
+
+    private fun mixInRange(generate: () -> Any?, config: RelationConfig): () -> Any? {
+        val isUnique = true // todo : temp
+        if (isUnique) {
+            return {
+                val list = mutableListOf<Any?>()
+                while (list.size < config.count) {
+                    list.add(generate())
+                }
+                list
+            }
+        } else {
+            return generate.mixIn { (0 until config.count).map { it() } }
+        }
     }
 
     private fun mixInNullable(source: () -> Any?): () -> Any? {
@@ -36,20 +54,22 @@ class Attribute(
         return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) it() else null }
     }
 
-    private fun getSource(): () -> Any? {
+    private fun getSource(config: RelationConfig): () -> Any? {
+        // primary first
+        if (isPrimary) {
+            // assume that use_auto_increment is true if not defined
+            val pattern = Pattern.SEQUENCE // temporary
+
+            if (extra?.contains("auto_increment") == true && config.useAutoIncrement) return { null } // insert null if you use_auto_increment true to get number from DBMS
+            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
+            else return { type.generateRandom() } // RANDOM
+        }
+
         val ref = reference
         if (ref != null) {
             val refColumn = Storage.find(ref.referencedRelation, ref.referencedAttribute)
                 ?: throw IllegalArgumentException("unexpected exception : ${ref.referencedRelation} ${ref.referencedAttribute}")
             return { refColumn.values.random() }
-        }
-        if (isPrimary) {
-            val useAutoIncrement = true // todo : get from user configuration
-            if (useAutoIncrement) {
-
-            } else {
-                return { Sequence.get(this) }
-            }
         }
         return { type.generateRandom() }
     }

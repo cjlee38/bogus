@@ -17,12 +17,20 @@ object UserConfiguration {
 
     fun <T> get(path: String): T? {
         var cnf = config
-        val split = path.split("/")
+        val split = path.split("/").filter { it.isNotEmpty() }
         for (i in 0 until split.size - 1) {
             val next = cnf[split[i]] ?: return null
             cnf = next as Map<String, Any>
         }
 
         return cnf[split.last()] as T::class
+    }
+
+    fun getRelationConfig(relationName: String): RelationConfig {
+//        val useAutoIncrement = UserConfiguration.get<Boolean>("bogus/relations/${relation.name}/use_auto_increment") ?: true
+//        val globalConfig = RelationConfig()
+//        val map = get<Map<String, Any>>("bogus/relations/$relationName")
+//        map["count"] ?:
+        return RelationConfig()
     }
 }
