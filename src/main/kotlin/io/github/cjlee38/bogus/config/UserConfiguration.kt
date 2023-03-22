@@ -15,13 +15,14 @@ object UserConfiguration {
         config = yaml.load(FileInputStream(ResourceUtils.getFile("classpath:bogus.yml")))
     }
 
-    fun get(path: String): String? {
+    fun <T> get(path: String): T? {
         var cnf = config
         val split = path.split("/")
         for (i in 0 until split.size - 1) {
             val next = cnf[split[i]] ?: return null
             cnf = next as Map<String, Any>
         }
-        return cnf[split.last()].toString()
+
+        return cnf[split.last()] as T::class
     }
 }

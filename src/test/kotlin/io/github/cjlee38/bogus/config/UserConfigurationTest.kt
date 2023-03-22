@@ -10,17 +10,17 @@ class UserConfigurationTest : StringSpec({
     }
 
     "get" {
-        val cnf = UserConfiguration.get("test")
-        cnf shouldBe "true"
+        val cnf = UserConfiguration.get<Boolean>("test")
+        cnf shouldBe true
     }
 
     "get nested" {
-        val cnf = UserConfiguration.get("bogus/relations/team/use_auto_increment")
-        cnf shouldBe "false"
+        val cnf = UserConfiguration.get<Boolean>("bogus/relations/team/use_auto_increment")
+        cnf shouldBe false
     }
 
     "get leaf" {
-        val cnf = UserConfiguration.get("bogus/relations/team/name/null_ratio")
-        cnf shouldBe "0.1"
+        val cnf = UserConfiguration.get<Double>("bogus/relations/team/name/null_ratio")
+        cnf shouldBe 0.1
     }
 })
