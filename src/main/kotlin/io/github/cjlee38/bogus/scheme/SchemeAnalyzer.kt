@@ -1,72 +1,35 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.scheme.reader.ReferenceResponse
+import io.github.cjlee38.bogus.scheme.reader.SchemeReader
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
-import io.github.cjlee38.bogus.util.getLowerString
-import io.github.cjlee38.bogus.util.getNullableLowerString
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Component
 import mu.KotlinLogging
+import org.springframework.stereotype.Component
 
 @Component
 class SchemeAnalyzer(
-    private val jdbcTemplate: JdbcTemplate,
+    private val schemeReader: SchemeReader,
     private val typeInferrer: TypeInferrer,
-    private val referenceAnalyzer: ReferenceAnalyzer,
 ) {
     private val logger = KotlinLogging.logger {}
 
     fun analyze(): Schema {
-        val database = requireDatabase()
-        val relations = requireTableNames()
-            .map { Relation(it, requireAttribute(it)) }
-        val references = referenceAnalyzer.analyze(database)
-        return Schema(post(references, relations))
+        val database = schemeReader.readDatabase()
+        val relations = schemeReader.readTables()
+            .map { Relation(it, schemeReader.readAttribute(it).map { it.toAttribute(typeInferrer) }) }
+        val references = schemeReader.readReferences(database)
+        return constructSchema(relations, references)
     }
 
-    private fun requireDatabase(): String {
-        val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
-        val database = dataSource.connection.catalog
-        logger.info { "detected database : $database" }
-        return database
-    }
-
-    private fun requireTableNames(): List<String> {
-        val tableNames = jdbcTemplate.query("show tables") { rs, _ ->
-            rs.getString(1)
-        }
-        logger.info { "detected tables : $tableNames" }
-        return tableNames
-    }
-
-    private fun requireAttribute(it: String?): List<Attribute> {
-        return jdbcTemplate.query("describe $it") { rs, _ ->
-            val field = rs.getLowerString("Field")
-            val type = rs.getLowerString("Type")
-            val isNullable = rs.getLowerString("Null")
-            val key = rs.getNullableLowerString("Key")
-            val default = rs.getNullableLowerString("Default")
-            val extra = rs.getNullableLowerString("Extra")
-
-            Attribute(
-                field = field,
-                type = typeInferrer.inferType(type),
-                isNullable = isNullable == "yes",
-                key = key,
-                default = default,
-                extra = extra
-            )
-        }
-    }
-
-    private fun post(references: List<ReferenceInfo>, relations: List<Relation>): List<Relation> {
+    private fun constructSchema(relations: List<Relation>, references: List<ReferenceResponse>): Schema {
         applyReferences(references, relations)
         val sorted = topologySort(relations)
         logger.info { "after toplogical sort : $sorted" }
-        return sorted
+        return Schema(sorted)
     }
 
-    private fun applyReferences(referenceInfos: List<ReferenceInfo>, relations: List<Relation>) {
-        referenceInfos.forEach { ref ->
+    private fun applyReferences(referenceResponses: List<ReferenceResponse>, relations: List<Relation>) {
+        referenceResponses.forEach { ref ->
             if (!ref.isForeign) {
                 return@forEach
             }
@@ -88,7 +51,8 @@ class SchemeAnalyzer(
         for (entry in inDegreeByRelation) {
             val references: List<Reference> = entry.key.attributes.map { it.reference }.filterNotNull()
             for (reference in references) {
-                inDegreeByRelation[reference.referencedRelation] = inDegreeByRelation[reference.referencedRelation]!! + 1
+                inDegreeByRelation[reference.referencedRelation] =
+                    inDegreeByRelation[reference.referencedRelation]!! + 1
             }
         }
 

@@ -16,7 +16,7 @@ class Attribute(
     val isNullable: Boolean,
     val key: String?,
     val default: String?,
-    val extra: String?
+    val extra: Extra
 ) {
     lateinit var relation: Relation
     var reference: Reference? = null
@@ -55,22 +55,22 @@ class Attribute(
     }
 
     private fun getSource(config: RelationConfig): () -> Any? {
-        // primary first
-        if (isPrimary) {
-            // assume that use_auto_increment is true if not defined
-            val pattern = Pattern.SEQUENCE // temporary
-
-            if (extra?.contains("auto_increment") == true && config.useAutoIncrement) return { null } // insert null if you use_auto_increment true to get number from DBMS
-            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
-            else return { type.generateRandom() } // RANDOM
-        }
-
         val ref = reference
         if (ref != null) {
             val refColumn = Storage.find(ref.referencedRelation, ref.referencedAttribute)
                 ?: throw IllegalArgumentException("unexpected exception : ${ref.referencedRelation} ${ref.referencedAttribute}")
             return { refColumn.values.random() }
         }
+
+        if (isPrimary) {
+            // assume that use_auto_increment is true if not defined
+            val pattern = Pattern.SEQUENCE // todo : temp
+
+            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if you use_auto_increment true to get number from DBMS
+            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
+            else return { type.generateRandom() } // RANDOM
+        }
+
         return { type.generateRandom() }
     }
 

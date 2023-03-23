@@ -1,6 +1,6 @@
-package io.github.cjlee38.bogus.scheme
+package io.github.cjlee38.bogus.scheme.reader
 
-data class ReferenceInfo(
+data class ReferenceResponse(
     val name: String,
     val relation: String,
     val attribute: String,
