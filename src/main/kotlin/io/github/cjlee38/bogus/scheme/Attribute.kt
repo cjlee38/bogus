@@ -6,7 +6,10 @@ import io.github.cjlee38.bogus.persistence.Sequence
 import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DType
+import io.github.cjlee38.bogus.scheme.type.IntegerType
+import io.github.cjlee38.bogus.scheme.type.StringType
 import io.github.cjlee38.bogus.util.mixIn
+import java.util.UUID
 import kotlin.random.Random
 
 
@@ -51,7 +54,7 @@ class Attribute(
 
     private fun mixInNullable(source: () -> Any?): () -> Any? {
         val nullRatio = 0.1 // todo : get ratio from user confiugration
-        return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) it() else null }
+        return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) null else it() }
     }
 
     private fun getSource(config: RelationConfig): () -> Any? {
@@ -59,6 +62,10 @@ class Attribute(
         if (ref != null) {
             val refColumn = Storage.find(ref.referencedRelation, ref.referencedAttribute)
                 ?: throw IllegalArgumentException("unexpected exception : ${ref.referencedRelation} ${ref.referencedAttribute}")
+            if (isPrimary || ref.referencedAttribute.isPrimary) {
+                val iterator = refColumn.values.iterator()
+                return { iterator.next() }
+            }
             return { refColumn.values.random() }
         }
 
@@ -66,8 +73,10 @@ class Attribute(
             // assume that use_auto_increment is true if not defined
             val pattern = Pattern.SEQUENCE // todo : temp
 
-            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if you use_auto_increment true to get number from DBMS
-            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
+            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
+            else if (type is IntegerType) return { Sequence.get(this) }
+            else if (type is StringType) return { UUID.randomUUID() }
+//            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
             else return { type.generateRandom() } // RANDOM
         }
 

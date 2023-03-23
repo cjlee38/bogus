@@ -27,8 +27,9 @@ class JdbcDao(
         table: Table,
         generatedKeyHolder: GeneratedKeyHolder
     ): List<Any?>? {
-        val useAutoIncrement = true
-        return if (useAutoIncrement) {
+        val useAutoIncrement = true // todo : temporary
+        val autoIncrement = table.relation.primaryAttribute?.extra?.autoIncrement == true
+        return if (autoIncrement && useAutoIncrement) {
             generatedKeyHolder.extractKeys()
         } else {
             table.columns.find { it.attribute.isPrimary }?.values

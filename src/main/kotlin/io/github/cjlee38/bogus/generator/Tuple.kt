@@ -5,11 +5,12 @@ data class Tuple(val values: List<Any?>) {
         return values[index]
     }
 
-    fun format(): List<String> {
+    fun format(): List<String?> {
         return values.map {
             when(it) {
-                is String -> "'$it'"
-                else -> it.toString()
+                null -> null
+                is Number -> it.toString()
+                else -> "'$it'"
             }
         }
     }
