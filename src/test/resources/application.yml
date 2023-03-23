@@ -1,17 +1,28 @@
 spring:
   profiles:
-    active: complex
+    active: pf
   #  datasource:
   #    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   #    username: sa
   #    password:
   datasource:
-    url: jdbc:mysql://localhost:63306/bogus?createDatabaseIfNotExist=true
     username: root
     password: root
   sql:
     init:
       mode: always
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: default
+  datasource:
+    url: jdbc:mysql://localhost:63306/bogus?createDatabaseIfNotExist=true
+  sql:
+    init:
+      platform: default
 
 ---
 
@@ -36,3 +47,15 @@ spring:
   sql:
     init:
       platform: complex
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: pf
+  datasource:
+    url: jdbc:mysql://localhost:63306/pf?createDatabaseIfNotExist=true
+  sql:
+    init:
+      platform: pf
