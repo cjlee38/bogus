@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 class Attribute(
     val field: String,
-    val type: DataType,
+    val type: DataType<*>,
     val isNullable: Boolean,
     val key: AttributeKey,
     val default: String?,

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 class TypeInferrer(
     private val parsers: List<TypeParser>
 ) {
-    fun inferType(notation: String): DataType {
+    fun inferType(notation: String): DataType<*> {
         return parsers.firstOrNull { it.parsable(notation) }
             ?.parse(notation)
             ?: throw IllegalArgumentException("infer type error : $notation")

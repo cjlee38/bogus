@@ -5,8 +5,8 @@ import java.util.concurrent.ThreadLocalRandom
 data class FloatingPointType(
     val min: Double,
     val max: Double
-) : DataType {
-    override fun generateRandom(): Any {
+) : DataType<Double> {
+    override fun generateRandom(): Double {
         val threadLocalRandom = ThreadLocalRandom.current()
         return threadLocalRandom.nextDouble(min, max)
     }

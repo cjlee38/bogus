@@ -5,8 +5,8 @@ import org.apache.commons.lang3.RandomStringUtils
 data class StringType(
     val isVariable: Boolean,
     val length: Int
-) : DataType {
-    override fun generateRandom(): Any {
+) : DataType<String> {
+    override fun generateRandom(): String {
         if (isVariable) {
             return RandomStringUtils.randomAlphanumeric(0, length)
         }

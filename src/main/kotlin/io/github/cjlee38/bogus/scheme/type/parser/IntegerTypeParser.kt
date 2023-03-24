@@ -1,6 +1,5 @@
 package io.github.cjlee38.bogus.scheme.type.parser
 
-import io.github.cjlee38.bogus.scheme.type.DataType
 import io.github.cjlee38.bogus.scheme.type.IntegerType
 import org.springframework.stereotype.Component
 import java.util.Locale
@@ -9,7 +8,7 @@ import java.util.Locale
 class IntegerTypeParser : AbstractTypeParser() {
     override val knownTypes = storageBytes.keys.toList()
 
-    override fun parse(notation: String): DataType {
+    override fun parse(notation: String): IntegerType {
         val (name, _, unsigned) = super.destruct(notation)
 
         val (min, max) = getMinMax(name)
@@ -17,7 +16,8 @@ class IntegerTypeParser : AbstractTypeParser() {
     }
 
     private fun getMinMax(name: String): Pair<Long, Long> {
-        val bytes = storageBytes[name.lowercase(Locale.getDefault())] ?: throw IllegalArgumentException("invalid integer type : $name")
+        val bytes = storageBytes[name.lowercase(Locale.getDefault())]
+            ?: throw IllegalArgumentException("invalid integer type : $name")
         val bits = bytes * byteBit
         val min = -1L shl (bits - 1)
         val max = (1L shl (bits - 1)) - 1

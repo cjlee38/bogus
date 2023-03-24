@@ -6,10 +6,10 @@ data class IntegerType(
     val isUnsigned: Boolean,
     val min: Long,
     val max: Long
-) : DataType {
+) : DataType<Long> {
     constructor(isUnsigned: String, min: Long, max: Long) : this(isUnsigned == "unsigned", min, max)
 
-    override fun generateRandom(): Any {
+    override fun generateRandom(): Long {
         val random = ThreadLocalRandom.current()
         return random.nextLong(min, max)
     }

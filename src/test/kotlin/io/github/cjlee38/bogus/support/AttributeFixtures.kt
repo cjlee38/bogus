@@ -8,7 +8,7 @@ import io.github.cjlee38.bogus.scheme.type.DataType
 
 fun createAttribute(
     field: String = "fixture-id",
-    type: DataType = createIntegerType(),
+    type: DataType<*> = createIntegerType(),
     isNullable: Boolean = false,
     key: AttributeKey = AttributeKey.NONE,
     default: String? = "",
