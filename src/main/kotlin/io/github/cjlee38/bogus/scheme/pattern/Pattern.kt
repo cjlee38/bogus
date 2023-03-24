@@ -12,8 +12,6 @@ interface Pattern {
                 ?: NumberPattern.values().find { it.name.equals(pattern, ignoreCase = true) })
                 ?: throw IllegalArgumentException()
         }
-
-
     }
 }
 

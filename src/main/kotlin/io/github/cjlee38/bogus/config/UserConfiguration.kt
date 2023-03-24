@@ -10,7 +10,12 @@ data class UserConfiguration(
     val analyzer: String?,
     val useAutoIncrement: Boolean?,
     val relations: Map<String, Map<String, AttributeConfiguration>>
-)
+) {
+    fun getAttributeConfiguration(relationName: String, attributeName: String): AttributeConfiguration {
+        val map = relations[relationName] ?: return AttributeConfiguration()
+        return map[attributeName] ?: return AttributeConfiguration()
+    }
+}
 
 data class AttributeConfiguration(
     val useAutoIncrement: Boolean? = true,

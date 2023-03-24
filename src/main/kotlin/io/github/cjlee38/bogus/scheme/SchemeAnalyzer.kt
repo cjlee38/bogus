@@ -23,8 +23,9 @@ class SchemeAnalyzer(
                     relationName,
                     schemeRepository.findAttributes(relationName)
                         .map {
-                            val attributeConfiguration = userConfiguration.relations[relationName]?.get(it.field)
-                            it.toAttribute(typeInferrer, attributeConfiguration!!)
+                            val attributeConfiguration =
+                                userConfiguration.getAttributeConfiguration(relationName, it.field)
+                            it.toAttribute(typeInferrer, attributeConfiguration)
                         }
                 )
             }

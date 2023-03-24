@@ -11,12 +11,12 @@ import io.github.cjlee38.bogus.scheme.type.DataType
 fun createAttribute(
     field: String = "fixture-id",
     type: DataType<*> = createIntegerType(),
-    isNullable: Boolean = false,
     key: AttributeKey = AttributeKey.NONE,
-    default: String? = "",
-    extra: Extra = Extra(true)
+    extra: Extra = Extra(true),
+    pattern: Pattern = Pattern.RANDOM,
+    nullHandler: AttributeNullHandler = AttributeNullHandler.NOT_NULL
 ): Attribute {
-    val attribute = Attribute(field, type, key, extra, Pattern.RANDOM, AttributeNullHandler(isNullable, 0.01, default)) // temp
+    val attribute = Attribute(field, type, key, extra, pattern, nullHandler)
     attribute.relation = createRelation(attribute)
     return attribute
 }

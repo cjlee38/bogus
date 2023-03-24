@@ -14,7 +14,7 @@ data class IntegerType(
 
     override fun generate(pattern: Pattern): Long {
         if (pattern === NumberPattern.SEQUENTIAL) {
-            Sequence.get(this)
+            return Sequence.get(this)
         }
         val random = ThreadLocalRandom.current()
         return random.nextLong(min, max)

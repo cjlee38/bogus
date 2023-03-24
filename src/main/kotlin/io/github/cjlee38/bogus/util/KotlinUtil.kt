@@ -11,3 +11,7 @@ fun (() -> Any?).mixIn(outer: (() -> Any?) -> Any?): () -> Any? {
 fun Any?.toInt(): Int {
     return this.toString().toInt(10)
 }
+
+fun Any?.toLong(): Long {
+    return this.toString().toLong(10)
+}

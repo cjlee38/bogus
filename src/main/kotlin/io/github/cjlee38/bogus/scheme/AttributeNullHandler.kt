@@ -18,4 +18,8 @@ class AttributeNullHandler(
         val nullValue = if (isNullable) null else default
         return generate.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) nullValue else it() }
     }
+
+    companion object {
+        val NOT_NULL = AttributeNullHandler(false, 0.0, null)
+    }
 }

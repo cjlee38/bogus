@@ -3,7 +3,6 @@ package io.github.cjlee38.bogus.scheme
 import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.generator.Column
 import io.github.cjlee38.bogus.persistence.Storage
-import io.github.cjlee38.bogus.scheme.pattern.NumberPattern
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DataType
 import io.github.cjlee38.bogus.util.mixIn
@@ -44,17 +43,11 @@ class Attribute(
         }
 
         if (key == AttributeKey.PRIMARY) {
-            // assume that use_auto_increment is true if not defined
-//            val stringPattern = StringPattern.SEQUENCE // todo : temp
-
             if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
-//            else if (type is IntegerType) return { Sequence.get(this) }
-//            else if (type is StringType) return { UUID.randomUUID() }
-//            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
             else return { type.generate(pattern) } // RANDOM
         }
 
-        return { type.generate(NumberPattern.SEQUENTIAL) }
+        return { type.generate(pattern) }
     }
 
     private fun mixInRange(generate: () -> Any?, config: RelationConfig): () -> Any? {
