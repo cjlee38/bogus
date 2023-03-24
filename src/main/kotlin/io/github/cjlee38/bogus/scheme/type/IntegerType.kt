@@ -5,7 +5,7 @@ import io.github.cjlee38.bogus.scheme.pattern.NumberPattern
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import java.util.concurrent.ThreadLocalRandom
 
-class IntegerType(
+data class IntegerType(
     val isUnsigned: Boolean,
     val min: Long,
     val max: Long
