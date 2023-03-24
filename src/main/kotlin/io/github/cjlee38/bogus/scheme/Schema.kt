@@ -1,12 +1,12 @@
 package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.config.RelationConfig
-import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.config.SchemaConfiguration
 import io.github.cjlee38.bogus.generator.Table
 
 data class Schema(
     val relations: List<Relation>,
-    val userConfiguration: UserConfiguration,
+    val schemaConfiguration: SchemaConfiguration
 ) {
     fun iterate(): Iterator<Table> {
         return iterator {

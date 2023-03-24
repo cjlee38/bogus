@@ -1,6 +1,6 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.config.SchemaConfiguration
 import io.github.cjlee38.bogus.scheme.reader.ReferenceResponse
 import io.github.cjlee38.bogus.scheme.reader.SchemeRepository
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SchemeAnalyzer(
-    private val userConfiguration: UserConfiguration,
+    private val schemaConfiguration: SchemaConfiguration,
     private val schemeRepository: SchemeRepository,
     private val typeInferrer: TypeInferrer,
 ) {
@@ -23,7 +23,7 @@ class SchemeAnalyzer(
                     schemeRepository.findAttributes(relationName)
                         .map {
                             val attributeConfiguration =
-                                userConfiguration.getAttributeConfiguration(relationName, it.field)
+                                schemaConfiguration.getAttributeConfiguration(relationName, it.field)
                             it.toAttribute(typeInferrer, attributeConfiguration)
                         }
                 )
@@ -36,7 +36,7 @@ class SchemeAnalyzer(
         applyReferences(references, relations)
         val sorted = topologySort(relations)
         logger.info { "after toplogical sort : $sorted" }
-        return Schema(sorted, userConfiguration)
+        return Schema(sorted, schemaConfiguration)
     }
 
     private fun applyReferences(referenceResponses: List<ReferenceResponse>, relations: List<Relation>) {

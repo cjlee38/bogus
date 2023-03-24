@@ -2,14 +2,15 @@ bogus:
   analyzer: auto # or manual
 #  database-name: bogus # database name
   use_auto_increment: true # use auto_increment on primary key
-  relations:
-    primary_sequence:
-      id:
-        use_auto_increment: false
-        pattern: sequential
-    foreign_nullable_ref_primary_auto_increment:
-      ref_id:
-        null_ratio: 0.0
-    foreign_nullable_ref_primary_sequence:
-      ref_id:
-        null_ratio: 1.0
+
+database:
+  primary_sequence:
+    id:
+      use_auto_increment: false
+      pattern: sequential
+  foreign_nullable_ref_primary_auto_increment:
+    ref_id:
+      null_ratio: 0.0
+  foreign_nullable_ref_primary_sequence:
+    ref_id:
+      null_ratio: 1.0

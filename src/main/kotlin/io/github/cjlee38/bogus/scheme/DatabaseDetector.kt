@@ -1,21 +1,21 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.config.BogusConfiguration
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
 @Component
 class DatabaseDetector(
-    userConfiguration: UserConfiguration,
+    bogusConfiguration: BogusConfiguration,
     dataSource: DataSource,
 ) {
     private val logger = KotlinLogging.logger { }
 
     val database: String
     init {
-        if (userConfiguration.databaseName != null) {
-            database = userConfiguration.databaseName
+        if (bogusConfiguration.databaseName != null) {
+            database = bogusConfiguration.databaseName
             logger.info { "database defined by USER : $database" }
         } else {
             database = dataSource.connection.catalog

@@ -5,14 +5,18 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties("bogus")
 @ConstructorBinding
-data class UserConfiguration(
+data class BogusConfiguration(
     val databaseName: String?,
     val analyzer: String?,
-    val useAutoIncrement: Boolean?,
-    val relations: Map<String, Map<String, AttributeConfiguration>>
+)
+
+@ConfigurationProperties("")
+@ConstructorBinding
+data class SchemaConfiguration(
+    val database: Map<String, Map<String, AttributeConfiguration>>
 ) {
     fun getAttributeConfiguration(relationName: String, attributeName: String): AttributeConfiguration {
-        val map = relations[relationName] ?: return AttributeConfiguration()
+        val map = database[relationName] ?: return AttributeConfiguration()
         return map[attributeName] ?: return AttributeConfiguration()
     }
 }

@@ -1,6 +1,6 @@
 package io.github.cjlee38.bogus.scheme.reader
 
-import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.config.BogusConfiguration
 import io.github.cjlee38.bogus.scheme.DatabaseDetector
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
