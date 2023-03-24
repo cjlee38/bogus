@@ -1,23 +1,29 @@
 package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.scheme.reader.ReferenceResponse
-import io.github.cjlee38.bogus.scheme.reader.SchemeReader
+import io.github.cjlee38.bogus.scheme.reader.SchemeRepository
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
 class SchemeAnalyzer(
-    private val schemeReader: SchemeReader,
+    private val schemeRepository: SchemeRepository,
     private val typeInferrer: TypeInferrer,
 ) {
     private val logger = KotlinLogging.logger {}
 
     fun analyze(): Schema {
-        val database = schemeReader.readDatabase()
-        val relations = schemeReader.readTables()
-            .map { Relation(it, schemeReader.readAttribute(it).map { it.toAttribute(typeInferrer) }) }
-        val references = schemeReader.readReferences(database)
+        val databaseName = schemeRepository.getDatabase()
+        val relations = schemeRepository.readTables()
+            .map { relationName ->
+                Relation(
+                    relationName,
+                    schemeRepository.findAttributes(relationName)
+                        .map { it.toAttribute(typeInferrer) }
+                )
+            }
+        val references = schemeRepository.readReferences(databaseName)
         return constructSchema(relations, references)
     }
 

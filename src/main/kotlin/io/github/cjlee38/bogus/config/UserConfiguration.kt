@@ -1,36 +1,19 @@
 package io.github.cjlee38.bogus.config
 
-import mu.KotlinLogging
-import org.springframework.util.ResourceUtils
-import org.yaml.snakeyaml.Yaml
-import java.io.FileInputStream
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 
-object UserConfiguration {
-    private val logger = KotlinLogging.logger {}
+@ConfigurationProperties("bogus")
+@ConstructorBinding
+data class UserConfiguration(
+    val databaseName: String?,
+    val analyzer: String?,
+    val useAutoIncrement: Boolean?,
+    val relations: Map<String, Map<String, AttributeConfiguration>>
+)
 
-    private val config: Map<String, Any>
-
-    init {
-        val yaml = Yaml()
-        config = yaml.load(FileInputStream(ResourceUtils.getFile("classpath:bogus.yml")))
-    }
-
-    fun <T> get(path: String): T? {
-        var cnf = config
-        val split = path.split("/").filter { it.isNotEmpty() }
-        for (i in 0 until split.size - 1) {
-            val next = cnf[split[i]] ?: return null
-            cnf = next as Map<String, Any>
-        }
-
-        return cnf[split.last()] as T::class
-    }
-
-    fun getRelationConfig(relationName: String): RelationConfig {
-//        val useAutoIncrement = UserConfiguration.get<Boolean>("bogus/relations/${relation.name}/use_auto_increment") ?: true
-//        val globalConfig = RelationConfig()
-//        val map = get<Map<String, Any>>("bogus/relations/$relationName")
-//        map["count"] ?:
-        return RelationConfig()
-    }
-}
+data class AttributeConfiguration(
+    val useAutoIncrement: Boolean?,
+    val nullRatio: Double?,
+    val pattern: String?
+)

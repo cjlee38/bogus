@@ -1,5 +1,13 @@
 package io.github.cjlee38.bogus.scheme.pattern
 
-enum class Pattern {
-    RANDOM, SEQUENCE, UUID, REGEX
+interface Pattern {
+
+}
+
+enum class StringPattern: Pattern {
+    RANDOM, UUID, REGEX
+}
+
+enum class NumberPattern: Pattern {
+    RANDOM, SEQUENTIAL
 }

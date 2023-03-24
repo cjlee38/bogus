@@ -1,26 +1,14 @@
 package io.github.cjlee38.bogus.config
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
+import io.github.cjlee38.bogus.support.IntegrationTest
+import org.junit.jupiter.api.Test
 
-class UserConfigurationTest : StringSpec({
-
-    "init" {
-        UserConfiguration
+@IntegrationTest
+class UserConfigurationTest(
+    private val userConfiguration: UserConfiguration
+) {
+    @Test
+    fun asd() {
+        println(userConfiguration)
     }
-
-    "get" {
-        val cnf = UserConfiguration.get<Boolean>("test")
-        cnf shouldBe true
-    }
-
-    "get nested" {
-        val cnf = UserConfiguration.get<Boolean>("bogus/relations/team/use_auto_increment")
-        cnf shouldBe false
-    }
-
-    "get leaf" {
-        val cnf = UserConfiguration.get<Double>("bogus/relations/team/name/null_ratio")
-        cnf shouldBe 0.1
-    }
-})
+}

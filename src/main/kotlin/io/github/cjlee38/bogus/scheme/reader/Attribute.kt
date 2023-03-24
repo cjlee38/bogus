@@ -5,7 +5,7 @@ import io.github.cjlee38.bogus.scheme.AttributeKey
 import io.github.cjlee38.bogus.scheme.Extra
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 
-class AttributeResponse(
+class Attribute(
     private val field: String,
     private val type: String,
     private val isNullable: String,

@@ -1,6 +1,5 @@
 package io.github.cjlee38.bogus
 
-import io.github.cjlee38.bogus.config.UserConfiguration
 import io.github.cjlee38.bogus.dao.DataRepository
 import io.github.cjlee38.bogus.generator.Column
 import io.github.cjlee38.bogus.persistence.Storage
@@ -31,7 +30,5 @@ class Bogus(
     }
 
     private fun bootstrap() {
-        UserConfiguration
-        // todo : read configuration file
     }
 }

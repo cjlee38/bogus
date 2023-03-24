@@ -1,8 +1,8 @@
 package io.github.cjlee38.bogus.scheme.reader
 
-interface SchemeReader {
-    fun readDatabase(): String
+interface SchemeRepository {
+    fun getDatabase(): String
     fun readTables(): List<String>
-    fun readAttribute(table: String): List<AttributeResponse>
+    fun findAttributes(table: String): List<Attribute>
     fun readReferences(database: String): List<ReferenceResponse>
 }

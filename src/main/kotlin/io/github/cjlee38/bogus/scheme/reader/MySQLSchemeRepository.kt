@@ -1,5 +1,7 @@
 package io.github.cjlee38.bogus.scheme.reader
 
+import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
 import mu.KotlinLogging
@@ -7,12 +9,16 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class MySQLSchemeReader(
-    private val jdbcTemplate: JdbcTemplate
-) : SchemeReader {
+class MySQLSchemeRepository(
+    private val jdbcTemplate: JdbcTemplate,
+    private val configuration: UserConfiguration,
+) : SchemeRepository {
     private val logger = KotlinLogging.logger { }
 
-    override fun readDatabase(): String {
+    override fun getDatabase(): String {
+        if (configuration.databaseName != null) {
+            return configuration.databaseName!!
+        }
         val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
         val database = dataSource.connection.catalog
         logger.info { "detected database : $database" }
@@ -27,9 +33,9 @@ class MySQLSchemeReader(
         return tableNames
     }
 
-    override fun readAttribute(table: String): List<AttributeResponse> {
+    override fun findAttributes(table: String): List<Attribute> {
         return jdbcTemplate.query("describe $table") { rs, _ ->
-            AttributeResponse(
+            Attribute(
                 rs.getLowerString("Field"),
                 rs.getLowerString("Type"),
                 rs.getLowerString("Null"),
