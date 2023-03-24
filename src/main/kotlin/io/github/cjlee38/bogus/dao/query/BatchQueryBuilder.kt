@@ -1,4 +1,4 @@
-package io.github.cjlee38.bogus.jdbc
+package io.github.cjlee38.bogus.dao.query
 
 import io.github.cjlee38.bogus.generator.Table
 import mu.KotlinLogging

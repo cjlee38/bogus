@@ -5,7 +5,7 @@ import java.math.BigDecimal
 data class FixedPointType(
     val precision: String,
     val scale: String
-) : DType {
+) : DataType {
     override fun generateRandom(): Any {
         return BigDecimal.ONE
         // todo

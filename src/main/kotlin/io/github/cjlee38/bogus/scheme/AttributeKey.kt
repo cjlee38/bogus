@@ -5,10 +5,10 @@ enum class AttributeKey {
 
     companion object {
         operator fun invoke(notation: String?): AttributeKey {
-            if (notation == "pri") {
-                return PRIMARY
+            return when (notation) {
+                "pri" -> PRIMARY
+                else -> NONE
             }
-            return NONE
         }
     }
 }

@@ -1,7 +1,7 @@
 package io.github.cjlee38.bogus.dao
 
 import io.github.cjlee38.bogus.generator.Table
-import io.github.cjlee38.bogus.jdbc.QueryBuilder
+import io.github.cjlee38.bogus.dao.query.QueryBuilder
 import io.github.cjlee38.bogus.scheme.AttributeKey
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component
 import java.sql.Statement
 
 @Component
-class JdbcDao(
+class JdbcDataRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val queryBuilder: QueryBuilder
-) : Dao {
+) : DataRepository {
     override fun insertTable(table: Table): List<Any?>? {
         val generatedKeyHolder = GeneratedKeyHolder()
         queryBuilder.build(table).forEach { query ->

@@ -5,7 +5,7 @@ import io.github.cjlee38.bogus.generator.Column
 import io.github.cjlee38.bogus.persistence.Sequence
 import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
-import io.github.cjlee38.bogus.scheme.type.DType
+import io.github.cjlee38.bogus.scheme.type.DataType
 import io.github.cjlee38.bogus.scheme.type.IntegerType
 import io.github.cjlee38.bogus.scheme.type.StringType
 import io.github.cjlee38.bogus.util.mixIn
@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 class Attribute(
     val field: String,
-    val type: DType,
+    val type: DataType,
     val isNullable: Boolean,
     val key: AttributeKey,
     val default: String?,

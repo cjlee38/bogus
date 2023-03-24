@@ -1,6 +1,6 @@
 package io.github.cjlee38.bogus.scheme.type.parser
 
-import io.github.cjlee38.bogus.scheme.type.DType
+import io.github.cjlee38.bogus.scheme.type.DataType
 import io.github.cjlee38.bogus.scheme.type.IntegerType
 import org.springframework.stereotype.Component
 import java.util.Locale
@@ -9,7 +9,7 @@ import java.util.Locale
 class IntegerTypeParser : AbstractTypeParser() {
     override val knownTypes = storageBytes.keys.toList()
 
-    override fun parse(notation: String): DType {
+    override fun parse(notation: String): DataType {
         val (name, _, unsigned) = super.destruct(notation)
 
         val (min, max) = getMinMax(name)

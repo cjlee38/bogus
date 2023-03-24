@@ -2,6 +2,6 @@ package io.github.cjlee38.bogus.dao
 
 import io.github.cjlee38.bogus.generator.Table
 
-interface Dao {
+interface DataRepository {
     fun insertTable(table: Table): List<Any?>?
 }
