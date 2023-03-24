@@ -16,7 +16,6 @@ class SchemeAnalyzer(
     private val logger = KotlinLogging.logger {}
 
     fun analyze(): Schema {
-        val databaseName = schemeRepository.getDatabase()
         val relations = schemeRepository.readTables()
             .map { relationName ->
                 Relation(
@@ -29,7 +28,7 @@ class SchemeAnalyzer(
                         }
                 )
             }
-        val references = schemeRepository.readReferences(databaseName)
+        val references = schemeRepository.readReferences()
         return constructSchema(relations, references)
     }
 

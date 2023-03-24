@@ -1,6 +1,7 @@
 package io.github.cjlee38.bogus.scheme.reader
 
 import io.github.cjlee38.bogus.config.UserConfiguration
+import io.github.cjlee38.bogus.scheme.DatabaseDetector
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
 import mu.KotlinLogging
@@ -10,22 +11,18 @@ import org.springframework.stereotype.Component
 @Component
 class MySQLSchemeRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val configuration: UserConfiguration,
+    databaseDetector: DatabaseDetector,
 ) : SchemeRepository {
     private val logger = KotlinLogging.logger { }
 
-    override fun getDatabase(): String {
-        if (configuration.databaseName != null) {
-            return configuration.databaseName!!
-        }
-        val dataSource = jdbcTemplate.dataSource ?: throw IllegalStateException("datasource undefined")
-        val database = dataSource.connection.catalog
-        logger.info { "detected database : $database" }
-        return database
+    private lateinit var database: String
+
+    init {
+        this.database = databaseDetector.database
     }
 
     override fun readTables(): List<String> {
-        val tableNames = jdbcTemplate.query("show tables") { rs, _ ->
+        val tableNames = jdbcTemplate.query("show tables from $database") { rs, _ ->
             rs.getString(1)
         }
         logger.info { "detected tables : $tableNames" }
@@ -33,7 +30,7 @@ class MySQLSchemeRepository(
     }
 
     override fun findAttributes(table: String): List<AttributeResponse> {
-        return jdbcTemplate.query("describe $table") { rs, _ ->
+        return jdbcTemplate.query("describe ${database}.$table") { rs, _ ->
             AttributeResponse(
                 rs.getLowerString("Field"),
                 rs.getLowerString("Type"),
@@ -45,8 +42,8 @@ class MySQLSchemeRepository(
         }
     }
 
-    override fun readReferences(database: String): List<ReferenceResponse> {
-        val sql = "select * from information_schema.key_column_usage where table_schema = '$database';"
+    override fun readReferences(): List<ReferenceResponse> {
+        val sql = "select * from information_schema.key_column_usage where table_schema = '${database}';"
 
         return jdbcTemplate.query(sql) { rs, _ ->
             val name = rs.getLowerString("constraint_name")

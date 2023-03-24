@@ -15,8 +15,12 @@ class AttributeNullHandler(
     )
 
     fun handle(generate: () -> Any?): () -> Any? {
-        val nullValue = if (isNullable) null else default
-        return generate.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) nullValue else it() }
+        return generate.mixIn {
+            if (Random.nextDouble(0.0, 1.0) <= nullRatio) {
+                if (isNullable) null else default ?: it()
+            }
+            else it()
+        }
     }
 
     companion object {
