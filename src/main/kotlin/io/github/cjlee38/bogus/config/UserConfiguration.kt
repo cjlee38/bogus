@@ -13,7 +13,7 @@ data class UserConfiguration(
 )
 
 data class AttributeConfiguration(
-    val useAutoIncrement: Boolean?,
-    val nullRatio: Double?,
-    val pattern: String?
+    val useAutoIncrement: Boolean? = true,
+    val nullRatio: Double? = 0.1,
+    val pattern: String? = "RANDOM"
 )

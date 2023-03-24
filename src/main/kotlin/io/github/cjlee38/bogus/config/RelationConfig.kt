@@ -5,3 +5,7 @@ data class RelationConfig(
     val useAutoIncrement: Boolean = true,
     val attributeConfigs: List<AttributeConfig> = mutableListOf()
 )
+
+class AttributeConfig {
+
+}

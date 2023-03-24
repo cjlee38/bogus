@@ -1,11 +1,20 @@
 bogus:
   analyzer: auto # or manual
-  database: bogus # database name
+  database-name: bogus # database name
   use_auto_increment: true # use auto_increment on primary key
   relations:
     team:
-      use_auto_increment: false
-      name:
+      id:
+        use_auto_increment: false
+      sub_name:
         null_ratio: 0.1
+    member:
+      id:
+        use_auto_increment: true
+      name:
+        pattern: random
+      age:
+        pattern: sequential
+
 
 

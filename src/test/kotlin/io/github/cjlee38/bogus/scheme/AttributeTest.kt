@@ -9,7 +9,6 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.collections.shouldContainOnlyNulls
-import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.matchers.string.shouldHaveMaxLength
 import io.kotest.matchers.types.shouldBeTypeOf
 import java.util.UUID
@@ -51,22 +50,36 @@ class AttributeTest : FreeSpec({
             val config = RelationConfig(count = 100, useAutoIncrement = false)
             val extra = Extra(autoIncrement = false)
 
-            "sequence" {
-                val attribute = createAttribute(key = AttributeKey.PRIMARY, extra = extra)
-                val column = attribute.generateColumn(config)
-                column.values shouldBeSortedWith { a, b -> a.toInt().compareTo(b.toInt()) }
+            "number" - {
+                "random" - {
+                    val attribute = createAttribute(key = AttributeKey.PRIMARY, extra = extra)
+                    val column = attribute.generateColumn(config)
+                    println(column.values)
+                }
+
+                "sequential" - {
+                    val attribute = createAttribute(key = AttributeKey.PRIMARY, extra = extra)
+                    val column = attribute.generateColumn(config)
+                    column.values shouldBeSortedWith { a, b -> a.toInt().compareTo(b.toInt()) }
+                }
             }
 
-            "uuid" {
-                val attribute = createAttribute(type = createStringType(), key = AttributeKey.PRIMARY, extra = extra)
-                val column = attribute.generateColumn(config)
-                column.values.forAll { it.shouldBeTypeOf<UUID>() }
+            "string" - {
+                "random" - {
+//                    val attribute = createAttribute(type = createStringType(), key = AttributeKey.PRIMARY, extra = extra)
+//                    attribute.generateColumn(RelationConfig(count = 100, useAutoIncrement = false, listOf(AttributeConfig())))
+                }
+
+                "uuid" {
+                    val attribute = createAttribute(type = createStringType(), key = AttributeKey.PRIMARY, extra = extra)
+                    val column = attribute.generateColumn(config)
+                    column.values.forAll { it.shouldBeTypeOf<UUID>() }
+                }
+
+                "regex".config(enabled = false) {
+                    TODO()
+                }
             }
         }
     }
-
-
-//    context("uuid") {
-//
-//    }
 })

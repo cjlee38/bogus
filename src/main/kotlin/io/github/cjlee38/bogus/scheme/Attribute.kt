@@ -2,24 +2,21 @@ package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.generator.Column
-import io.github.cjlee38.bogus.persistence.Sequence
 import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.pattern.NumberPattern
+import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DataType
-import io.github.cjlee38.bogus.scheme.type.IntegerType
-import io.github.cjlee38.bogus.scheme.type.StringType
 import io.github.cjlee38.bogus.util.mixIn
-import java.util.UUID
 import kotlin.random.Random
 
 
 class Attribute(
     val field: String,
     val type: DataType<*>,
-    val isNullable: Boolean,
     val key: AttributeKey,
-    val default: String?,
-    val extra: Extra
+    val extra: Extra,
+    private val pattern: Pattern,
+    private val nullHandler: AttributeNullHandler,
 ) {
     lateinit var relation: Relation
     var reference: Reference? = null
@@ -27,7 +24,7 @@ class Attribute(
 
     fun generateColumn(config: RelationConfig): Column {
         var generate = getSource(config)
-        if (isNullable) generate = mixInNullable(generate)
+        generate = nullHandler.handle(generate)
         generate = mixInRange(generate, config)
 
         val column = Column(this, generate() as List<Any?>)
@@ -51,10 +48,10 @@ class Attribute(
 //            val stringPattern = StringPattern.SEQUENCE // todo : temp
 
             if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
-            else if (type is IntegerType) return { Sequence.get(this) }
-            else if (type is StringType) return { UUID.randomUUID() }
+//            else if (type is IntegerType) return { Sequence.get(this) }
+//            else if (type is StringType) return { UUID.randomUUID() }
 //            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
-            else return { type.generate(NumberPattern.SEQUENTIAL) } // RANDOM
+            else return { type.generate(pattern) } // RANDOM
         }
 
         return { type.generate(NumberPattern.SEQUENTIAL) }

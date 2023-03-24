@@ -1,7 +1,6 @@
 package io.github.cjlee38.bogus.scheme.reader
 
 import io.github.cjlee38.bogus.config.UserConfiguration
-import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
 import mu.KotlinLogging
@@ -33,9 +32,9 @@ class MySQLSchemeRepository(
         return tableNames
     }
 
-    override fun findAttributes(table: String): List<Attribute> {
+    override fun findAttributes(table: String): List<AttributeResponse> {
         return jdbcTemplate.query("describe $table") { rs, _ ->
-            Attribute(
+            AttributeResponse(
                 rs.getLowerString("Field"),
                 rs.getLowerString("Type"),
                 rs.getLowerString("Null"),

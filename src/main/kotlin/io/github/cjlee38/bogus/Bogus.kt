@@ -13,7 +13,6 @@ class Bogus(
 ) {
 
     fun run() {
-        bootstrap()
         val schema = schemeAnalyzer.analyze()
         val it = schema.iterate()
         while (it.hasNext()) {
@@ -27,8 +26,5 @@ class Bogus(
                 }
             }
         }
-    }
-
-    private fun bootstrap() {
     }
 }

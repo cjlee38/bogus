@@ -11,6 +11,8 @@ spring:
   sql:
     init:
       mode: always
+  config:
+    import: bogus.yml
 
 ---
 
