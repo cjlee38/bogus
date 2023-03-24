@@ -12,7 +12,6 @@ object Storage {
         store[table.relation] = table.relation.attributes
             .withIndex()
             .associate { (index, attribute) -> attribute to table.columns[index] }
-            .apply { this.values.forEach { it.cached = true }  }
             .toMutableMap()
     }
 
@@ -22,7 +21,6 @@ object Storage {
             store[attribute.relation] = mutableMapOf()
         }
         store[attribute.relation]!![attribute] = column
-        column.cached = true
     }
 
     fun find(relation: Relation, attribute: Attribute): Column? {

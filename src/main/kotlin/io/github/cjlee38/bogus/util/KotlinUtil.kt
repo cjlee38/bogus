@@ -7,3 +7,7 @@ fun String?.isEffectiveNull(): Boolean {
 fun (() -> Any?).mixIn(outer: (() -> Any?) -> Any?): () -> Any? {
     return { outer(this) }
 }
+
+fun Any?.toInt(): Int {
+    return this.toString().toInt(10)
+}

@@ -1,7 +1,6 @@
 package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.config.RelationConfig
-import io.github.cjlee38.bogus.config.UserConfiguration
 import io.github.cjlee38.bogus.generator.Table
 
 class Relation(
@@ -15,14 +14,13 @@ class Relation(
     val fields: List<String>
         get() = attributes.map { it.field }
     val primaryAttribute: Attribute?
-        get() = attributes.find { it.isPrimary }
+        get() = attributes.find { it.key == AttributeKey.PRIMARY }
 
     fun generateTable(relationConfig: RelationConfig): Table {
         return Table(
             relation = this,
             rowCount = relationConfig.count,
             columns = attributes.map {
-                UserConfiguration.getRelationConfig(name)
                 it.generateColumn(relationConfig)
             },
         )

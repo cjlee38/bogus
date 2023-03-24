@@ -2,6 +2,7 @@ package io.github.cjlee38.bogus.dao
 
 import io.github.cjlee38.bogus.generator.Table
 import io.github.cjlee38.bogus.jdbc.QueryBuilder
+import io.github.cjlee38.bogus.scheme.AttributeKey
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Component
@@ -32,7 +33,7 @@ class JdbcDao(
         return if (autoIncrement && useAutoIncrement) {
             generatedKeyHolder.extractKeys()
         } else {
-            table.columns.find { it.attribute.isPrimary }?.values
+            table.columns.find { it.attribute.key == AttributeKey.PRIMARY }?.values
         }
     }
 }

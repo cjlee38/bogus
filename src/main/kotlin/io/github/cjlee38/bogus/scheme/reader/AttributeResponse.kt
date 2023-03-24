@@ -1,6 +1,7 @@
 package io.github.cjlee38.bogus.scheme.reader
 
 import io.github.cjlee38.bogus.scheme.Attribute
+import io.github.cjlee38.bogus.scheme.AttributeKey
 import io.github.cjlee38.bogus.scheme.Extra
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 
@@ -17,7 +18,7 @@ class AttributeResponse(
             field = field,
             type = typeInferrer.inferType(type),
             isNullable = isNullable == "yes",
-            key = key,
+            key = AttributeKey(key),
             default = default,
             extra = Extra(extra)
         )

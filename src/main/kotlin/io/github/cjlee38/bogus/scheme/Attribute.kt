@@ -17,15 +17,13 @@ class Attribute(
     val field: String,
     val type: DType,
     val isNullable: Boolean,
-    val key: String?,
+    val key: AttributeKey,
     val default: String?,
     val extra: Extra
 ) {
     lateinit var relation: Relation
     var reference: Reference? = null
         internal set
-    val isPrimary: Boolean
-        get() = key == "pri"
 
     fun generateColumn(config: RelationConfig): Column {
         var generate = getSource(config)
@@ -35,6 +33,31 @@ class Attribute(
         val column = Column(this, generate() as List<Any?>)
         Storage.save(column)
         return column
+    }
+
+    private fun getSource(config: RelationConfig): () -> Any? {
+        reference?.let {
+            val refColumn = Storage.find(it.referencedRelation, it.referencedAttribute)
+                ?: throw IllegalArgumentException("unexpected exception : ${it.referencedRelation} ${it.referencedAttribute}")
+            if (this.key == AttributeKey.PRIMARY || it.referencedAttribute.key == AttributeKey.PRIMARY) {
+                val iterator = refColumn.values.iterator()
+                return { iterator.next() }
+            }
+            return { refColumn.values.random() }
+        }
+
+        if (key == AttributeKey.PRIMARY) {
+            // assume that use_auto_increment is true if not defined
+            val pattern = Pattern.SEQUENCE // todo : temp
+
+            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
+            else if (type is IntegerType) return { Sequence.get(this) }
+            else if (type is StringType) return { UUID.randomUUID() }
+//            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
+            else return { type.generateRandom() } // RANDOM
+        }
+
+        return { type.generateRandom() }
     }
 
     private fun mixInRange(generate: () -> Any?, config: RelationConfig): () -> Any? {
@@ -55,32 +78,6 @@ class Attribute(
     private fun mixInNullable(source: () -> Any?): () -> Any? {
         val nullRatio = 0.1 // todo : get ratio from user confiugration
         return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) null else it() }
-    }
-
-    private fun getSource(config: RelationConfig): () -> Any? {
-        val ref = reference
-        if (ref != null) {
-            val refColumn = Storage.find(ref.referencedRelation, ref.referencedAttribute)
-                ?: throw IllegalArgumentException("unexpected exception : ${ref.referencedRelation} ${ref.referencedAttribute}")
-            if (isPrimary || ref.referencedAttribute.isPrimary) {
-                val iterator = refColumn.values.iterator()
-                return { iterator.next() }
-            }
-            return { refColumn.values.random() }
-        }
-
-        if (isPrimary) {
-            // assume that use_auto_increment is true if not defined
-            val pattern = Pattern.SEQUENCE // todo : temp
-
-            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
-            else if (type is IntegerType) return { Sequence.get(this) }
-            else if (type is StringType) return { UUID.randomUUID() }
-//            else if (pattern == Pattern.SEQUENCE) return { Sequence.get(this) }
-            else return { type.generateRandom() } // RANDOM
-        }
-
-        return { type.generateRandom() }
     }
 
     override fun toString(): String {
