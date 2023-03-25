@@ -10,18 +10,27 @@ data class BogusConfiguration(
     val analyzer: String?,
 )
 
-@ConfigurationProperties("")
+@ConfigurationProperties("database")
 @ConstructorBinding
 data class SchemaConfiguration(
-    val database: Map<String, Map<String, AttributeConfiguration>>
+    val relations: List<RelationConfiguration>
 ) {
+    // todo : apply global configuration
     fun getAttributeConfiguration(relationName: String, attributeName: String): AttributeConfiguration {
-        val map = database[relationName] ?: return AttributeConfiguration()
-        return map[attributeName] ?: return AttributeConfiguration()
+        return (relations.find { it.name == relationName }
+            ?.attributes?.find { it.name == attributeName }
+            ?: AttributeConfiguration(attributeName))
     }
 }
 
+data class RelationConfiguration(
+    val name: String,
+    val count: Int? = 1000,
+    val attributes: List<AttributeConfiguration>
+)
+
 data class AttributeConfiguration(
+    val name: String,
     val useAutoIncrement: Boolean? = true,
     val nullRatio: Double? = 0.1,
     val pattern: String? = "RANDOM"
