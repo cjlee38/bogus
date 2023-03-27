@@ -1,5 +1,7 @@
 package io.github.cjlee38.bogus.util
 
+import java.math.BigInteger
+
 fun String?.isEffectiveNull(): Boolean {
     return this.isNullOrEmpty() || this.equals("null", ignoreCase = true)
 }
@@ -14,4 +16,8 @@ fun Any?.toInt(): Int {
 
 fun Any?.toLong(): Long {
     return this.toString().toLong(10)
+}
+
+operator fun Int.compareTo(cardinality: BigInteger): Int {
+    return BigInteger.valueOf(this.toLong()).compareTo(cardinality)
 }

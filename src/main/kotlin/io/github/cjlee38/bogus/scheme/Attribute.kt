@@ -5,6 +5,8 @@ import io.github.cjlee38.bogus.generator.Column
 import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DataType
+import io.github.cjlee38.bogus.scheme.type.Null
+import io.github.cjlee38.bogus.util.compareTo
 import io.github.cjlee38.bogus.util.mixIn
 import kotlin.random.Random
 
@@ -21,6 +23,10 @@ class Attribute(
     var reference: Reference? = null
         internal set
 
+    init {
+        require(!(key.isUnique && nullHandler.default !is Null)) { "mixing unique and default value is prohibited in field $field" }
+    }
+
     fun generateColumn(config: RelationConfig): Column {
         var generate = getSource(config)
         generate = nullHandler.handle(generate)
@@ -32,6 +38,12 @@ class Attribute(
     }
 
     private fun getSource(config: RelationConfig): () -> Any? {
+        if (key == AttributeKey.UNIQUE && !nullHandler.isNullable) {
+            if (config.count > type.cardinality) {
+                throw IllegalArgumentException("count(${config.count}) cannot be bigger than cardinality (${type.cardinality})")
+            }
+        }
+
         reference?.let {
             val refColumn = Storage.find(it.referencedRelation, it.referencedAttribute)
                 ?: throw IllegalArgumentException("unexpected exception : ${it.referencedRelation} ${it.referencedAttribute}")
@@ -43,7 +55,7 @@ class Attribute(
         }
 
         if (key == AttributeKey.PRIMARY) {
-            if (extra.autoIncrement && config.useAutoIncrement) return { null } // insert null if 'use_auto_increment' is true to get number from DBMS
+            if (extra.autoIncrement && config.useAutoIncrement) return { Null } // insert null if 'use_auto_increment' is true to get number from DBMS
             else return { type.generate(pattern) } // RANDOM
         }
 
@@ -51,23 +63,18 @@ class Attribute(
     }
 
     private fun mixInRange(generate: () -> Any?, config: RelationConfig): () -> Any? {
-        val isUnique = true // todo : temp
-        if (isUnique) {
-            return {
-                val list = mutableListOf<Any?>()
-                while (list.size < config.count) {
-                    list.add(generate())
-                }
-                list
+        return {
+            val set = mutableSetOf<Any?>()
+            while (set.size < config.count) {
+                set.add(generate())
             }
-        } else {
-            return generate.mixIn { (0 until config.count).map { it() } }
+            set.toList()
         }
     }
 
     private fun mixInNullable(source: () -> Any?): () -> Any? {
         val nullRatio = 0.1 // todo : get ratio from user confiugration
-        return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) null else it() }
+        return source.mixIn { if (Random.nextDouble(0.0, 1.0) <= nullRatio) Null else it() }
     }
 
     override fun toString(): String {

@@ -3,12 +3,16 @@ package io.github.cjlee38.bogus.scheme.type
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.pattern.StringPattern
 import org.apache.commons.lang3.RandomStringUtils
+import java.math.BigInteger
 import java.util.UUID
 
 data class StringType(
     val isVariable: Boolean,
     val length: Int
 ) : DataType<String> {
+    override val cardinality: BigInteger
+        get() = TODO("Not yet implemented")
+
     override fun generate(pattern: Pattern): String {
         if (pattern == StringPattern.UUID) {
             return UUID.randomUUID().toString()

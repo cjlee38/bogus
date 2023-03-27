@@ -1,5 +1,6 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.scheme.type.Null
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -8,7 +9,7 @@ class AttributeNullHandlerTest : StringSpec({
 
     "not-null" {
         val source = { 1 }
-        val nullHandler = AttributeNullHandler(isNullable = false, nullRatio = 0.0, default = null)
+        val nullHandler = AttributeNullHandler(isNullable = false, nullRatio = 0.0, default = Null)
 
         val handle = nullHandler.handle(source)
 
@@ -17,7 +18,7 @@ class AttributeNullHandlerTest : StringSpec({
 
     "null" {
         val source = { 1 }
-        val nullHandler = AttributeNullHandler(isNullable = true, nullRatio = 1.0, default = null)
+        val nullHandler = AttributeNullHandler(isNullable = true, nullRatio = 1.0, default = Null)
 
         val handle = nullHandler.handle(source)
 
