@@ -27,10 +27,7 @@ class JdbcDataRepository(
         table: Table,
         generatedKeyHolder: GeneratedKeyHolder
     ): List<Any>? {
-        val useAutoIncrement = true // todo : temporary
-//        val autoIncrement = table.relation.primaryAttribute?.extra?.autoIncrement == true
-        val autoIncrement = true // todo : temporary
-        return if (autoIncrement && useAutoIncrement) {
+        return if (table.relation.primaryAttribute?.autoIncrement == true) {
             generatedKeyHolder.extractKeys()
         } else {
             table.columns.find { it.attribute.isPrimary }?.values

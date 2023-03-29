@@ -9,7 +9,7 @@ class Attribute(
     val field: String,
     val type: DataType<Any>,
     private val pattern: Pattern,
-    private val constraints: Constraints,
+    val constraints: Constraints,
     val isPrimary: Boolean
 ) {
     lateinit var relation: Relation
@@ -20,11 +20,14 @@ class Attribute(
         }
     lateinit var column: Column
 
+    val autoIncrement: Boolean
+        get() = isPrimary && constraints.has(AutoIncrementConstraint::class)
+
     fun generateColumn(): Column {
         validateGeneratable()
         val generate = constraints.mixInConstraints { type.generate(pattern) }
-        val map = (0 until relation.count).map { generate() }
-        this.column = Column(this, map)
+        val values = (0 until relation.count).map { generate() }
+        this.column = Column(this, values)
         return column
     }
 
