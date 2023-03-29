@@ -1,6 +1,5 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.Null
 import io.github.cjlee38.bogus.support.createAttribute
@@ -19,7 +18,6 @@ import io.kotest.matchers.types.shouldBeTypeOf
 class AttributeTest : FreeSpec({
 
     "normal" - {
-        val config = RelationConfig(count = 1000, useAutoIncrement = true)
 
         "random-integer" {
             val attribute = createAttribute(type = createIntegerType())
@@ -38,8 +36,6 @@ class AttributeTest : FreeSpec({
     }
 
     "unique" - {
-        val config = RelationConfig(count = 1000, useAutoIncrement = false)
-
         "not-null" {
             val attribute = createAttribute(
                 type = createIntegerType(min = 0L, max = 10L),
@@ -59,7 +55,7 @@ class AttributeTest : FreeSpec({
             )
             val column = attribute.generateColumn()
             column.values shouldContainAll (0L until 10L).toList()
-            column.values.filterIsInstance<Null>() shouldHaveSize config.count - (0 until 10L).toList().size
+            column.values.filterIsInstance<Null>() shouldHaveSize attribute.relation.count - (0 until 10L).toList().size
         }
 
         "default value" {
@@ -74,8 +70,6 @@ class AttributeTest : FreeSpec({
 
     "primary" - {
         "dbms-generated" - {
-            val config = RelationConfig(count = 100, useAutoIncrement = true)
-
             "auto-increment" {
                 val attribute = createAttribute(constraints = createConstraints(AutoIncrementConstraint()))
                 val column = attribute.generateColumn()

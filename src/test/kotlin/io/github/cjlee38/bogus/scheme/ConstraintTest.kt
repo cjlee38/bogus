@@ -1,6 +1,5 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.scheme.pattern.NumberPattern
 import io.github.cjlee38.bogus.scheme.type.Default
 import io.github.cjlee38.bogus.scheme.type.Null
