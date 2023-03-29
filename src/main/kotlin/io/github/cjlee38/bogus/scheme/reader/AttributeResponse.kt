@@ -2,9 +2,12 @@ package io.github.cjlee38.bogus.scheme.reader
 
 import io.github.cjlee38.bogus.config.AttributeConfiguration
 import io.github.cjlee38.bogus.scheme.Attribute
-import io.github.cjlee38.bogus.scheme.AttributeKey
-import io.github.cjlee38.bogus.scheme.AttributeNullHandler
-import io.github.cjlee38.bogus.scheme.Extra
+import io.github.cjlee38.bogus.scheme.Constraint
+import io.github.cjlee38.bogus.scheme.Constraints
+import io.github.cjlee38.bogus.scheme.DefaultConstraint
+import io.github.cjlee38.bogus.scheme.NullableConstraint
+import io.github.cjlee38.bogus.scheme.AutoIncrementConstraint
+import io.github.cjlee38.bogus.scheme.UniqueConstraint
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 
@@ -20,10 +23,18 @@ class AttributeResponse(
         return Attribute(
             field = field,
             type = typeInferrer.inferType(type),
-            key = AttributeKey(key),
-            extra = Extra(extra),
             pattern = Pattern.of(attributeConfiguration.pattern),
-            nullHandler = AttributeNullHandler(isNullable, attributeConfiguration.nullRatio, default)
+            constraints = of(isNullable, attributeConfiguration.nullRatio, default, extra, key),
+            isPrimary = key == "pri"
         )
+    }
+
+    fun of(isNullable: String, nullRatio: Double?, default: String?, extra: String?, key: String?): Constraints {
+        val values = mutableListOf<Constraint>()
+        if (isNullable == "yes") values.add(NullableConstraint(nullRatio!!))
+        if (default != null) values.add(DefaultConstraint())
+        if (key == "pri" && extra == "auto_increment") values.add(AutoIncrementConstraint())
+        if (key == "pri" || key == "uni") values.add(UniqueConstraint(null))
+        return Constraints(values)
     }
 }

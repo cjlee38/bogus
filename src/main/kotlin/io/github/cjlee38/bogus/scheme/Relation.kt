@@ -14,7 +14,7 @@ class Relation(
     val fields: List<String>
         get() = attributes.map { it.field }
     val primaryAttribute: Attribute?
-        get() = attributes.find { it.key == AttributeKey.PRIMARY }
+        get() = attributes.find { it.isPrimary }
 
     fun generateTable(relationConfig: RelationConfig): Table {
         return Table(

@@ -1,14 +1,13 @@
 package io.github.cjlee38.bogus.scheme.type
 
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
-import java.math.BigInteger
 import java.util.concurrent.ThreadLocalRandom
 
 data class FloatingPointType(
     val min: Double,
     val max: Double
 ) : DataType<Double> {
-    override val cardinality: BigInteger
+    override val cardinality: Long
         get() = TODO("Not yet implemented")
 
     override fun generate(pattern: Pattern): Double {

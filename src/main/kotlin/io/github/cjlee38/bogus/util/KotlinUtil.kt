@@ -1,12 +1,13 @@
 package io.github.cjlee38.bogus.util
 
 import java.math.BigInteger
+import kotlin.math.pow
 
 fun String?.isEffectiveNull(): Boolean {
     return this.isNullOrEmpty() || this.equals("null", ignoreCase = true)
 }
 
-fun (() -> Any?).mixIn(outer: (() -> Any?) -> Any?): () -> Any? {
+fun (() -> Any).mixIn(outer: (() -> Any) -> Any): () -> Any {
     return { outer(this) }
 }
 
@@ -20,4 +21,8 @@ fun Any?.toLong(): Long {
 
 operator fun Int.compareTo(cardinality: BigInteger): Int {
     return BigInteger.valueOf(this.toLong()).compareTo(cardinality)
+}
+
+fun Long.pow(n: Int): Long {
+    return this.toDouble().pow(n).toLong()
 }

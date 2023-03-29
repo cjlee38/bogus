@@ -1,8 +1,7 @@
 package io.github.cjlee38.bogus.dao
 
-import io.github.cjlee38.bogus.generator.Table
 import io.github.cjlee38.bogus.dao.query.QueryBuilder
-import io.github.cjlee38.bogus.scheme.AttributeKey
+import io.github.cjlee38.bogus.generator.Table
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Component
@@ -13,7 +12,7 @@ class JdbcDataRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val queryBuilder: QueryBuilder
 ) : DataRepository {
-    override fun insertTable(table: Table): List<Any?>? {
+    override fun insertTable(table: Table): List<Any>? {
         val generatedKeyHolder = GeneratedKeyHolder()
         queryBuilder.build(table).forEach { query ->
             jdbcTemplate.update(
@@ -27,13 +26,14 @@ class JdbcDataRepository(
     private fun extractPrimary(
         table: Table,
         generatedKeyHolder: GeneratedKeyHolder
-    ): List<Any?>? {
+    ): List<Any>? {
         val useAutoIncrement = true // todo : temporary
-        val autoIncrement = table.relation.primaryAttribute?.extra?.autoIncrement == true
+//        val autoIncrement = table.relation.primaryAttribute?.extra?.autoIncrement == true
+        val autoIncrement = true // todo : temporary
         return if (autoIncrement && useAutoIncrement) {
             generatedKeyHolder.extractKeys()
         } else {
-            table.columns.find { it.attribute.key == AttributeKey.PRIMARY }?.values
+            table.columns.find { it.attribute.isPrimary }?.values
         }
     }
 }
