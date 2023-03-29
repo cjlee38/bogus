@@ -1,8 +1,6 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.bogus.config.RelationConfig
 import io.github.cjlee38.bogus.generator.Column
-import io.github.cjlee38.bogus.persistence.Storage
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DataType
 
@@ -16,21 +14,24 @@ class Attribute(
 ) {
     lateinit var relation: Relation
     var reference: Reference? = null
-        internal set
+        internal set(value) {
+            field = value
+            if (value != null) constraints.add(ForeignConstraint(value))
+        }
     lateinit var column: Column
 
-    fun generateColumn(config: RelationConfig): Column {
-        validateGeneratable(config)
+    fun generateColumn(): Column {
+        validateGeneratable()
         val generate = constraints.mixInConstraints { type.generate(pattern) }
-        val map = (0 until config.count).map { generate() }
+        val map = (0 until relation.count).map { generate() }
         this.column = Column(this, map)
         return column
     }
 
-    private fun validateGeneratable(config: RelationConfig) {
+    private fun validateGeneratable() {
         if (constraints.has(UniqueConstraint::class) && !constraints.has(NullableConstraint::class)) {
-            if (config.count > type.cardinality) {
-                throw IllegalArgumentException("count(${config.count}) cannot be bigger than cardinality(${type.cardinality})")
+            if (relation.count > type.cardinality) {
+                throw IllegalArgumentException("count(${relation.count}) cannot be bigger than cardinality(${type.cardinality})")
             }
         }
     }

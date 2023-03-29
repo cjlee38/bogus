@@ -4,7 +4,6 @@ data class ReferenceResponse(
     val name: String,
     val relation: String,
     val attribute: String,
-    val referencedDatabase: String?,
     val referencedRelation: String?,
     val referencedAttribute: String?
 ) {

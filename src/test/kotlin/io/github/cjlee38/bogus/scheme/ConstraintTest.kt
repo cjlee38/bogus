@@ -6,6 +6,7 @@ import io.github.cjlee38.bogus.scheme.type.Default
 import io.github.cjlee38.bogus.scheme.type.Null
 import io.github.cjlee38.bogus.support.createAttribute
 import io.github.cjlee38.bogus.support.createReference
+import io.github.cjlee38.bogus.support.createRelation
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -76,21 +77,28 @@ class ConstraintTest : FreeSpec({
     }
 
     "foreign" - {
-        val count = 10
-        val reference = createReference(referencedAttribute = createAttribute(pattern = NumberPattern.SEQUENTIAL))
-        val column = reference.referencedAttribute.generateColumn(config = RelationConfig(count = count))
-
         "one to one" {
-            val constraint = ForeignConstraint(reference = reference, relationshipRatio = 1.0)
+            val reference = createReference(referencedAttribute = createAttribute(pattern = NumberPattern.SEQUENTIAL))
+            val column = reference.referencedAttribute.generateColumn()
+
+            val constraint = ForeignConstraint(reference = reference)
             val generate = constraint.mixInConstraint { value }
             val expected = (column.values.indices).map { generate() }
             expected shouldContainExactly column.values
         }
 
         "one to many" {
-            val constraint = ForeignConstraint(reference = reference, relationshipRatio = 0.5)
+            val referencedAttribute = createAttribute(pattern = NumberPattern.SEQUENTIAL)
+            referencedAttribute.relation = createRelation(count = 10)
+            val attribute = createAttribute()
+            attribute.relation = createRelation(count = 100)
+
+            val reference = createReference(attribute, referencedAttribute)
+            val column = referencedAttribute.generateColumn()
+
+            val constraint = ForeignConstraint(reference = reference)
             val generate = constraint.mixInConstraint { value }
-            val expected = (column.values.indices).map { generate() }
+            val expected = (0 until 100).map { generate() }
             column.values.shouldContainAll(expected)
         }
     }

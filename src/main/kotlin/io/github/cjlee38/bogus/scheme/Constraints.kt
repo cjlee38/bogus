@@ -5,11 +5,11 @@ import kotlin.reflect.KClass
 class Constraints(
     input: List<Constraint>
 ) {
-    private val values: List<Constraint>
+    private val values: MutableList<Constraint>
 
     init {
         require(!(input.has(UniqueConstraint::class) && input.has(DefaultConstraint::class))) { "unique and default constraint are incompatible" }
-        values = input.sortedBy { it.priority }
+        values = input.sortedBy { it.priority }.toMutableList()
     }
 
     fun mixInConstraints(source: () -> Any): () -> Any {
@@ -18,6 +18,10 @@ class Constraints(
 
     fun has(klass: KClass<out Constraint>): Boolean {
         return values.has(klass)
+    }
+
+    fun add(constraint: Constraint) {
+        values.add(constraint)
     }
 
     companion object {

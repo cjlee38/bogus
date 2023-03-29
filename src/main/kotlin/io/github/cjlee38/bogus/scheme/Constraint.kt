@@ -56,15 +56,17 @@ class AutoIncrementConstraint : Constraint(4) {
 
 class ForeignConstraint(
     private val reference: Reference,
-    private val relationshipRatio: Double
 ) : Constraint(5) {
     override fun mixInConstraint(generate: () -> Any): () -> Any {
+        val relationshipMultiple = reference.relation.count / reference.referencedRelation.count
         val refColumn = reference.referencedAttribute.column
         var index = 0
-
+        var cnt = 0
         return generate.mixIn {
             val v = refColumn.values[index]
-            if (Random.nextDouble(0.0, 1.0) <= relationshipRatio) {
+            cnt++
+            if (cnt >= relationshipMultiple) {
+                cnt = 0
                 index++
             }
             return@mixIn v

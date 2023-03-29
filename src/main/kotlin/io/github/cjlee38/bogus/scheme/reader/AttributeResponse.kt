@@ -19,17 +19,20 @@ class AttributeResponse(
     private val default: String?,
     private val extra: String?
 ) {
-    fun toAttribute(typeInferrer: TypeInferrer, attributeConfiguration: AttributeConfiguration): Attribute {
+    fun toAttribute(
+        typeInferrer: TypeInferrer,
+        attributeConfiguration: AttributeConfiguration,
+    ): Attribute {
         return Attribute(
             field = field,
             type = typeInferrer.inferType(type),
             pattern = Pattern.of(attributeConfiguration.pattern),
-            constraints = of(isNullable, attributeConfiguration.nullRatio, default, extra, key),
+            constraints = createConstraints(isNullable, attributeConfiguration.nullRatio, default, extra, key),
             isPrimary = key == "pri"
         )
     }
 
-    fun of(isNullable: String, nullRatio: Double?, default: String?, extra: String?, key: String?): Constraints {
+    private fun createConstraints(isNullable: String, nullRatio: Double?, default: String?, extra: String?, key: String?): Constraints {
         val values = mutableListOf<Constraint>()
         if (isNullable == "yes") values.add(NullableConstraint(nullRatio!!))
         if (default != null) values.add(DefaultConstraint())

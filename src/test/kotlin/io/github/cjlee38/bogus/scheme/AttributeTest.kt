@@ -23,13 +23,13 @@ class AttributeTest : FreeSpec({
 
         "random-integer" {
             val attribute = createAttribute(type = createIntegerType())
-            val column = attribute.generateColumn(config)
+            val column = attribute.generateColumn()
             column.values.forAll { it.shouldBeTypeOf<Long>() }
         }
 
         "random-string" {
             val attribute = createAttribute(type = createStringType())
-            val column = attribute.generateColumn(config)
+            val column = attribute.generateColumn()
             column.values.forAll {
                 it.shouldBeTypeOf<String>()
                 it shouldHaveMaxLength 255
@@ -47,7 +47,7 @@ class AttributeTest : FreeSpec({
                 constraints = createConstraints(UniqueConstraint())
             )
             shouldThrow<IllegalArgumentException> {
-                attribute.generateColumn(config)
+                attribute.generateColumn()
             }
         }
 
@@ -57,7 +57,7 @@ class AttributeTest : FreeSpec({
                 pattern = Pattern.RANDOM,
                 constraints = createConstraints(UniqueConstraint(), NullableConstraint(0.5))
             )
-            val column = attribute.generateColumn(config)
+            val column = attribute.generateColumn()
             column.values shouldContainAll (0L until 10L).toList()
             column.values.filterIsInstance<Null>() shouldHaveSize config.count - (0 until 10L).toList().size
         }
@@ -78,7 +78,7 @@ class AttributeTest : FreeSpec({
 
             "auto-increment" {
                 val attribute = createAttribute(constraints = createConstraints(AutoIncrementConstraint()))
-                val column = attribute.generateColumn(config)
+                val column = attribute.generateColumn()
                 column.values.shouldForAll { it is Null }
             }
             // todo : @GeneratedValue(sequence, table)
@@ -91,14 +91,14 @@ class AttributeTest : FreeSpec({
 //            "number" - {
 //                "random" {
 //                    val attribute = createAttribute(pattern = Pattern.RANDOM)
-//                    val column = attribute.generateColumn(config)
+//                    val column = attribute.generateColumn()
 //                    println(column.values)
 //                }
 //
 //                "sequential" {
 //                    val attribute =
 //                        createAttribute(key = AttributeKey.PRIMARY, extra = extra, pattern = NumberPattern.SEQUENTIAL)
-//                    val column = attribute.generateColumn(config)
+//                    val column = attribute.generateColumn()
 //                    column.values shouldBeSortedWith { a, b -> a.toLong().compareTo(b.toLong()) }
 //                }
 //            }

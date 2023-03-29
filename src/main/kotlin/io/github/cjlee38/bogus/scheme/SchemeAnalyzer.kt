@@ -16,17 +16,19 @@ class SchemeAnalyzer(
     private val logger = KotlinLogging.logger {}
 
     fun analyze(): Schema {
-        val references = schemeRepository.readReferences()
+        val references: List<ReferenceResponse> = schemeRepository.readReferences()
         val relations = schemeRepository.readTables()
             .map { relationName ->
                 Relation(
                     relationName,
                     schemeRepository.findAttributes(relationName)
-                        .map {
-                            val attributeConfiguration =
-                                schemaConfiguration.getAttributeConfiguration(relationName, it.field)
-                            it.toAttribute(typeInferrer, attributeConfiguration)
-                        }
+                        .map { attributeResponse ->
+                            attributeResponse.toAttribute(
+                                typeInferrer,
+                                schemaConfiguration.getAttributeConfiguration(relationName, attributeResponse.field),
+                            )
+                        },
+                    schemaConfiguration.getRelationConfiguration(relationName).count!! // todo
                 )
             }
         return constructSchema(relations, references)

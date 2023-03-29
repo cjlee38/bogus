@@ -21,6 +21,11 @@ data class SchemaConfiguration(
             ?.attributes?.find { it.name == attributeName }
             ?: AttributeConfiguration(attributeName))
     }
+
+    fun getRelationConfiguration(relationName: String): RelationConfiguration {
+        return relations.find { it.name == relationName }
+            ?: RelationConfiguration(relationName, attributes = emptyList())
+    }
 }
 
 data class RelationConfiguration(

@@ -1,6 +1,5 @@
 package io.github.cjlee38.bogus.scheme.reader
 
-import io.github.cjlee38.bogus.config.BogusConfiguration
 import io.github.cjlee38.bogus.scheme.DatabaseDetector
 import io.github.cjlee38.bogus.util.getLowerString
 import io.github.cjlee38.bogus.util.getNullableLowerString
@@ -49,11 +48,10 @@ class MySQLSchemeRepository(
             val name = rs.getLowerString("constraint_name")
             val relation = rs.getLowerString("table_name")
             val attribute = rs.getLowerString("column_name")
-            val referencedDatabase: String? = rs.getNullableLowerString("referenced_table_schema")
             val referencedRelation = rs.getNullableLowerString("referenced_table_name")
             val referencedAttribute = rs.getNullableLowerString("referenced_column_name")
 
-            ReferenceResponse(name, relation, attribute, referencedDatabase, referencedRelation, referencedAttribute)
+            ReferenceResponse(name, relation, attribute, referencedRelation, referencedAttribute)
         }
     }
 }
