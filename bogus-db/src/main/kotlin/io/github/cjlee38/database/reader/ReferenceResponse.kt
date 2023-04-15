@@ -1,4 +1,4 @@
-package io.github.cjlee38.bogus.scheme.reader
+package io.github.cjlee38.database.reader
 
 data class ReferenceResponse(
     val name: String,

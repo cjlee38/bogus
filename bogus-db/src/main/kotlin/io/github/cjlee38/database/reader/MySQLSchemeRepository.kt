@@ -1,9 +1,9 @@
-package io.github.cjlee38.bogus.scheme.reader
+package io.github.cjlee38.database.reader
 
-import io.github.cjlee38.bogus.util.getLowerString
-import io.github.cjlee38.bogus.util.getNullableLowerString
 import io.github.cjlee38.database.DatabaseDetector
 import io.github.cjlee38.database.SchemeRepository
+import io.github.cjlee38.database.util.getLowerString
+import io.github.cjlee38.database.util.getNullableLowerString
 import mu.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component

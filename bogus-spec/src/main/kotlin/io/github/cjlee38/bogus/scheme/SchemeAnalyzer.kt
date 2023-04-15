@@ -1,9 +1,10 @@
 package io.github.cjlee38.bogus.scheme
 
+import io.github.cjlee38.bogus.config.AttributeConfiguration
 import io.github.cjlee38.bogus.config.SchemaConfiguration
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
-import io.github.cjlee38.bogus.scheme.reader.AttributeResponse
-import io.github.cjlee38.bogus.scheme.reader.ReferenceResponse
+import io.github.cjlee38.database.reader.AttributeResponse
+import io.github.cjlee38.database.reader.ReferenceResponse
 import io.github.cjlee38.bogus.scheme.type.TypeInferrer
 import io.github.cjlee38.database.SchemeRepository
 import mu.KotlinLogging
@@ -23,6 +24,7 @@ class SchemeAnalyzer(
             .map { relationName ->
                 Relation(
                     relationName,
+                    schemaConfiguration.getRelationConfiguration(relationName).count!!, // todo
                     schemeRepository.findAttributes(relationName)
                         .map { attributeResponse ->
                             toAttribute(
@@ -31,7 +33,6 @@ class SchemeAnalyzer(
                                 schemaConfiguration.getAttributeConfiguration(relationName, attributeResponse.field),
                             )
                         },
-                    schemaConfiguration.getRelationConfiguration(relationName).count!! // todo
                 )
             }
         return constructSchema(relations, references)

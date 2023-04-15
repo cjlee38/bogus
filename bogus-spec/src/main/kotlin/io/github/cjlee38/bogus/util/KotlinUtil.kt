@@ -3,10 +3,6 @@ package io.github.cjlee38.bogus.util
 import java.math.BigInteger
 import kotlin.math.pow
 
-fun String?.isEffectiveNull(): Boolean {
-    return this.isNullOrEmpty() || this.equals("null", ignoreCase = true)
-}
-
 fun (() -> Any).mixIn(outer: (() -> Any) -> Any): () -> Any {
     return { outer(this) }
 }

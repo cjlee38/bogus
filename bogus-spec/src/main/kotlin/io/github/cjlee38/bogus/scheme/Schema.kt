@@ -1,7 +1,7 @@
 package io.github.cjlee38.bogus.scheme
 
 import io.github.cjlee38.bogus.config.SchemaConfiguration
-import io.github.cjlee38.database.data.Table
+import io.github.cjlee38.database.Table
 
 data class Schema(
     val relations: List<Relation>,

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.springframework.boot") version "2.7.9"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
@@ -11,9 +9,8 @@ repositories {
     mavenCentral()
 }
 
-extra["kotlin-coroutines.version"] = "1.6.0"
-
 dependencies {
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation(project(":bogus-db"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation(project(":bogus-spec"))
 }

@@ -7,5 +7,5 @@ fun createRelation(
     vararg attributes: Attribute,
     count: Int = 100
 ) : Relation {
-    return Relation("fixture-relation", attributes = attributes.asList(), count)
+    return Relation("fixture-relation", count, attributes = attributes.asList())
 }

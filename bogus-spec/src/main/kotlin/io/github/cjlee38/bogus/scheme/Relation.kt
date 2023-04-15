@@ -1,11 +1,11 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.database.data.Table
+import io.github.cjlee38.database.Table
 
 class Relation(
     val name: String,
-    val attributes: List<Attribute>,
-    val count: Int
+    val count: Int,
+    val attributes: List<Attribute>
 ) {
     init {
         attributes.forEach { it.relation = this }
@@ -18,7 +18,7 @@ class Relation(
 
     fun generateTable(): Table {
         return Table(
-            relation = this,
+            name = name,
             rowCount = count,
             columns = attributes.map { it.generateColumn() },
         )

@@ -1,4 +1,4 @@
-package io.github.cjlee38.bogus.util
+package io.github.cjlee38.database.util
 
 import java.sql.ResultSet
 
@@ -9,4 +9,8 @@ fun ResultSet.getLowerString(columnLabel: String): String {
 fun ResultSet.getNullableLowerString(columnLabel: String): String? {
     val value = getString(columnLabel)?.lowercase()
     return if (value.isEffectiveNull()) null else value
+}
+
+fun String?.isEffectiveNull(): Boolean {
+    return this.isNullOrEmpty() || this.equals("null", ignoreCase = true)
 }

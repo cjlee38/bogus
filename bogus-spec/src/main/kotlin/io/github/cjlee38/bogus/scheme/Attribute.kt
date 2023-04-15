@@ -1,8 +1,10 @@
 package io.github.cjlee38.bogus.scheme
 
-import io.github.cjlee38.database.data.Column
 import io.github.cjlee38.bogus.scheme.pattern.Pattern
 import io.github.cjlee38.bogus.scheme.type.DataType
+import io.github.cjlee38.bogus.scheme.type.Default
+import io.github.cjlee38.bogus.scheme.type.Null
+import io.github.cjlee38.database.Column
 
 
 class Attribute(
@@ -26,9 +28,18 @@ class Attribute(
     fun generateColumn(): Column {
         validateGeneratable()
         val generate = constraints.mixInConstraints { type.generate(pattern) }
-        val values = (0 until relation.count).map { generate() }
-        this.column = Column(this, values)
+        val values = (0 until relation.count).map { generate() }.map { format(it) }
+        this.column = Column(field, isPrimary, values)
         return column
+    }
+
+    private fun format(any: Any): String {
+        return when (any) {
+            is Null -> "null"
+            is Default -> toString()
+            is Number -> toString()
+            else -> "'${toString()}'"
+        }
     }
 
     private fun validateGeneratable() {
